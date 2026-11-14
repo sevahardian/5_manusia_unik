@@ -89,6 +89,33 @@ $meja = isset($_SESSION['nomor_meja']) ? $_SESSION['nomor_meja'] : '01';
                 </div>
             </div>
         </div>
+
+        <!-- Pilihan Metode Pembayaran -->
+        <div id="payment-method-box" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm mt-4">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                <i class="fa-solid fa-wallet text-orange-500 mr-1"></i> Metode Pembayaran:
+            </label>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <label class="relative flex flex-col p-3 border-2 rounded-xl cursor-pointer transition border-orange-500 bg-orange-50/50" id="label-qris">
+                    <input type="radio" name="metode_pembayaran" value="QRIS" class="sr-only" checked onchange="selectPayment('QRIS')">
+                    <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-qrcode text-orange-600"></i> QRIS
+                    </span>
+                    <span class="text-[10px] text-slate-500 mt-0.5">Scan instan lewat HP</span>
+                </label>
+                <label class="relative flex flex-col p-3 border-2 rounded-xl cursor-pointer transition border-slate-200 bg-white hover:border-slate-300" id="label-cash">
+                    <input type="radio" name="metode_pembayaran" value="Tunai / Kasir" class="sr-only" onchange="selectPayment('Tunai / Kasir')">
+                    <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-money-bill-wave text-slate-600"></i> Tunai (Cash)
+                    </span>
+                    <span class="text-[10px] text-slate-500 mt-0.5">Bayar di meja kasir</span>
+                </label>
+            </div>
+            <div class="mt-2.5 p-2 rounded-lg bg-orange-50/60 border border-orange-100 text-[10px] text-slate-600 flex items-center gap-1.5">
+                <i class="fa-solid fa-shield-halved text-orange-500"></i>
+                <span>Anti-Fake Order: QR validasi akan tampil di layar status Anda.</span>
+            </div>
+        </div>
     </main>
 
     <!-- Bottom Checkout Action Bar -->
@@ -203,10 +230,24 @@ $meja = isset($_SESSION['nomor_meja']) ? $_SESSION['nomor_meja'] : '01';
             document.getElementById('checkout-total-val').innerText = 'Rp ' + total.toLocaleString('id-ID');
         }
 
+        function selectPayment(metode) {
+            const qrisLabel = document.getElementById('label-qris');
+            const cashLabel = document.getElementById('label-cash');
+            if (metode === 'QRIS') {
+                qrisLabel.className = 'relative flex flex-col p-3 border-2 rounded-xl cursor-pointer transition border-orange-500 bg-orange-50/50';
+                cashLabel.className = 'relative flex flex-col p-3 border-2 rounded-xl cursor-pointer transition border-slate-200 bg-white hover:border-slate-300';
+            } else {
+                cashLabel.className = 'relative flex flex-col p-3 border-2 rounded-xl cursor-pointer transition border-orange-500 bg-orange-50/50';
+                qrisLabel.className = 'relative flex flex-col p-3 border-2 rounded-xl cursor-pointer transition border-slate-200 bg-white hover:border-slate-300';
+            }
+        }
+
         async function submitOrder() {
             const cart = getCart();
             const nama = document.getElementById('nama_pelanggan').value.trim();
             const btnSubmit = document.getElementById('btn-submit-order');
+            const metodeChecked = document.querySelector('input[name="metode_pembayaran"]:checked');
+            const metode = metodeChecked ? metodeChecked.value : 'QRIS';
 
             if (!nama) {
                 alert('Silakan masukkan Nama Pemesan terlebih dahulu!');
@@ -229,6 +270,7 @@ $meja = isset($_SESSION['nomor_meja']) ? $_SESSION['nomor_meja'] : '01';
                     body: JSON.stringify({
                         nomor_meja: NOMOR_MEJA,
                         nama_pelanggan: nama,
+                        metode_pembayaran: metode,
                         items: cart
                     })
                 });

@@ -20,7 +20,12 @@ if ($order_id <= 0) {
 
 try {
     if ($action === 'set_lunas') {
-        $stmt = $pdo->prepare("UPDATE orders SET status_pembayaran = 'lunas' WHERE id = ?");
+        $stmt = $pdo->prepare("
+            UPDATE orders 
+            SET status_pembayaran = 'lunas',
+                status_pesanan = CASE WHEN status_pesanan = 'menunggu' THEN 'dimasak' ELSE status_pesanan END
+            WHERE id = ?
+        ");
         $stmt->execute([$order_id]);
     } elseif (isset($_POST['status_pesanan'])) {
         $status_pesanan = sanitize($_POST['status_pesanan']);
@@ -34,6 +39,7 @@ try {
     // Error handling
 }
 
-header('Location: index.php');
+$redirect = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'index.php';
+header("Location: $redirect");
 exit;
 

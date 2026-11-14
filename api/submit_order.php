@@ -75,13 +75,14 @@ try {
 
     // 2. Buat kode pesanan unik (contoh: ORD-20261113-1234)
     $kode_pesanan = 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
+    $metode_pembayaran = !empty($data['metode_pembayaran']) ? trim($data['metode_pembayaran']) : 'QRIS';
 
     // 3. Simpan ke tabel orders
     $stmt_order = $pdo->prepare("
-        INSERT INTO orders (kode_pesanan, nomor_meja, nama_pelanggan, total_harga, status_pembayaran, status_pesanan)
-        VALUES (?, ?, ?, ?, 'belum_bayar', 'menunggu')
+        INSERT INTO orders (kode_pesanan, nomor_meja, nama_pelanggan, total_harga, status_pembayaran, status_pesanan, metode_pembayaran)
+        VALUES (?, ?, ?, ?, 'belum_bayar', 'menunggu', ?)
     ");
-    $stmt_order->execute([$kode_pesanan, $nomor_meja, $nama_pelanggan, $total_harga]);
+    $stmt_order->execute([$kode_pesanan, $nomor_meja, $nama_pelanggan, $total_harga, $metode_pembayaran]);
     $order_id = $pdo->lastInsertId();
 
     // 4. Simpan ke tabel order_items

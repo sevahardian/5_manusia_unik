@@ -28,18 +28,22 @@ $orders = $stmt->fetchAll();
     <title>Dashboard Kasir & Dapur - Live Orders</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800">
+<body class="bg-slate-50 min-h-screen text-slate-800">
 
     <!-- Navbar Kasir -->
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
+    <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-30 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-blue-500/30">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-orange-500/20">
                     <i class="fa-solid fa-cash-register"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-base leading-tight">Dashboard Kasir & Dapur</h1>
+                    <h1 class="font-extrabold text-base leading-tight">Dashboard Kasir & Dapur</h1>
                     <div class="flex items-center space-x-2 text-xs text-slate-400">
                         <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
                         <span id="live-indicator">Live Polling Aktif (5s)</span>
@@ -48,17 +52,23 @@ $orders = $stmt->fetchAll();
             </div>
 
             <div class="flex items-center space-x-2 text-xs">
+                <!-- Tombol Scan QR Pesanan -->
+                <button onclick="openScannerModal()" class="px-3.5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold flex items-center space-x-1.5 shadow-md shadow-orange-500/20 active:scale-95 transition">
+                    <i class="fa-solid fa-qrcode text-sm"></i>
+                    <span>Scan QR Pesanan</span>
+                </button>
+
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                    <a href="../admin/index.php" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center space-x-1.5 transition">
-                        <i class="fa-solid fa-chart-line"></i>
+                    <a href="../admin/index.php" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold flex items-center space-x-1.5 transition">
+                        <i class="fa-solid fa-chart-pie"></i>
                         <span>Panel Admin</span>
                     </a>
                 <?php endif; ?>
-                <button onclick="fetchOrders()" class="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center space-x-1" title="Refresh Sekarang">
+                <button onclick="fetchOrders()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center space-x-1" title="Refresh Sekarang">
                     <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i>
                     <span class="hidden sm:inline">Refresh</span>
                 </button>
-                <a href="../admin/logout.php" onclick="return confirm('Keluar dari sesi Kasir?')" class="px-3 py-1.5 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white font-bold flex items-center space-x-1.5 transition">
+                <a href="../admin/logout.php" onclick="return confirm('Keluar dari sesi Kasir?')" class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/20 font-bold flex items-center space-x-1.5 transition">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span class="hidden sm:inline">Logout</span>
                 </a>
@@ -252,6 +262,9 @@ $orders = $stmt->fetchAll();
         // Jalankan polling setiap 5 detik
         setInterval(fetchOrders, 5000);
     </script>
+
+    <!-- Modal Scanner QR Code -->
+    <?php include_once __DIR__ . '/../components/scanner_modal.php'; ?>
 </body>
 </html>
 

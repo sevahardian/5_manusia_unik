@@ -1,6 +1,6 @@
 <?php
 // admin/index.php
-// [BAGIAN 1: PROGRAMMER 1] Dashboard Utama Administrator & Rekap Penjualan
+// Dashboard Utama Administrator & Rekap Penjualan
 
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/helper.php';
@@ -55,110 +55,131 @@ $top_menus = $pdo->query("
     <title>Dashboard Admin - Resto Enak Rasa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col">
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-    <!-- Top Navbar Admin -->
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-emerald-500/20">
-                    <i class="fa-solid fa-chart-line"></i>
+    <!-- Navbar Pelanggan & Petugas Persis Landing Page -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+            <a href="index.php" class="flex items-center space-x-2.5">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-orange-500/20">
+                    <i class="fa-solid fa-utensils"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-base leading-tight">Admin Backoffice</h1>
-                    <span class="text-xs text-slate-400">Selamat datang, <b><?= htmlspecialchars($_SESSION['nama'] ?? 'Admin') ?></b> (Administrator)</span>
+                    <span class="font-extrabold text-slate-900 text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
+                    <span class="text-[10px] text-orange-600 font-semibold tracking-wider uppercase">Admin Backoffice</span>
                 </div>
-            </div>
+            </a>
 
-            <!-- Navigasi Menu Admin -->
+            <!-- Nav Links -->
             <div class="flex items-center space-x-2 text-xs">
-                <a href="index.php" class="px-3 py-2 rounded-lg bg-emerald-600 text-white font-bold flex items-center space-x-1.5 shadow-sm">
-                    <i class="fa-solid fa-house"></i>
+                <!-- Tombol Scan QR Pesanan -->
+                <button onclick="openScannerModal()" class="px-3.5 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-qrcode text-xs"></i>
+                    <span>Scan QR</span>
+                </button>
+                <a href="index.php" class="px-3.5 py-2 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-slate-700 font-bold rounded-xl border border-slate-200 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-chart-pie text-xs"></i>
                     <span class="hidden sm:inline">Overview</span>
                 </a>
-                <a href="menu.php" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold flex items-center space-x-1.5 transition">
-                    <i class="fa-solid fa-bowl-food"></i>
+                <a href="menu.php" class="px-3.5 py-2 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-slate-700 font-bold rounded-xl border border-slate-200 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-bowl-food text-xs"></i>
                     <span>Kelola Menu</span>
                 </a>
-                <a href="../kasir/index.php" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold flex items-center space-x-1.5 transition">
-                    <i class="fa-solid fa-cash-register"></i>
+                <a href="../kasir/index.php" class="px-3.5 py-2 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-slate-700 font-bold rounded-xl border border-slate-200 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-cash-register text-xs"></i>
                     <span class="hidden sm:inline">Layar Kasir</span>
                 </a>
-                <a href="logout.php" onclick="return confirm('Keluar dari sesi Admin?')" class="px-3 py-2 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white font-bold flex items-center space-x-1.5 transition ml-2">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span class="hidden sm:inline">Logout</span>
+                <a href="logout.php" onclick="return confirm('Keluar dari sesi Admin?')" class="p-2 text-slate-400 hover:text-rose-600 transition" title="Logout">
+                    <i class="fa-solid fa-right-from-bracket text-base"></i>
                 </a>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
         
-        <!-- Welcome Banner -->
-        <div class="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-6 text-white shadow-lg shadow-emerald-600/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h2 class="text-xl font-black">Ringkasan Kinerja Penjualan</h2>
-                <p class="text-emerald-100 text-xs mt-1">Pantau total omzet, transaksi harian, dan menu favorit pelanggan secara real-time.</p>
+        <!-- Welcome Banner Persis Style Hero Landing Page -->
+        <div class="bg-gradient-to-b from-orange-50/60 to-slate-50 p-6 sm:p-8 rounded-3xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+            <div class="space-y-3">
+                <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-orange-100/80 text-orange-700 text-xs font-bold border border-orange-200">
+                    <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                    <span>Monitoring Penjualan Real-Time</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-900">
+                    Ringkasan Kinerja Resto
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-600 max-w-lg leading-relaxed">
+                    Pantau omzet harian, transaksi pesanan meja pelanggan, serta kelola katalog menu dalam satu sistem terpadu.
+                </p>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="menu.php" class="px-4 py-2 bg-white text-emerald-800 hover:bg-emerald-50 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-sm">
-                    <i class="fa-solid fa-plus-circle"></i>
+
+            <div class="flex items-center gap-3 flex-wrap">
+                <button onclick="openScannerModal()" class="px-5 py-3 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-qrcode text-sm"></i>
+                    <span>Scan QR Validasi</span>
+                </button>
+                <a href="menu.php" class="px-4 py-3 bg-white hover:bg-orange-50 hover:text-orange-600 text-slate-700 text-xs sm:text-sm font-bold rounded-xl border border-slate-200 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-plus text-xs"></i>
                     <span>Tambah Menu Baru</span>
                 </a>
-                <a href="../pembeli/index.php?meja=01" target="_blank" class="px-4 py-2 bg-emerald-800/60 hover:bg-emerald-800 text-white border border-emerald-400/30 rounded-xl text-xs font-bold transition flex items-center space-x-1.5">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    <span>Buka Tampilan Pembeli</span>
+                <a href="../pembeli/index.php?meja=01" target="_blank" class="px-4 py-3 bg-white hover:bg-orange-50 hover:text-orange-600 text-slate-700 text-xs sm:text-sm font-bold rounded-xl border border-slate-200 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    <span>Tampilan Pembeli</span>
                 </a>
             </div>
         </div>
 
         <!-- 4 Kartu Statistik -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <!-- Omzet Hari Ini -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex items-center justify-between">
                 <div>
-                    <span class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider block">Omzet Hari Ini</span>
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest block">Omzet Hari Ini</span>
                     <h3 class="text-2xl font-black text-slate-900 mt-1"><?= format_rupiah($omzet_hari_ini) ?></h3>
-                    <span class="text-[11px] text-slate-400 mt-0.5 block"><?= $pesanan_hari_ini ?> transaksi hari ini</span>
+                    <span class="text-xs text-slate-500 mt-1 block"><?= $pesanan_hari_ini ?> transaksi hari ini</span>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl font-black">
                     <i class="fa-solid fa-calendar-day"></i>
                 </div>
             </div>
 
             <!-- Total Keseluruhan Omzet -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex items-center justify-between">
                 <div>
-                    <span class="text-[11px] font-bold text-blue-600 uppercase tracking-wider block">Total Pendapatan</span>
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest block">Total Pendapatan</span>
                     <h3 class="text-2xl font-black text-slate-900 mt-1"><?= format_rupiah($total_omzet) ?></h3>
-                    <span class="text-[11px] text-slate-400 mt-0.5 block"><?= $total_pesanan_lunas ?> pesanan lunas</span>
+                    <span class="text-xs text-slate-500 mt-1 block"><?= $total_pesanan_lunas ?> pesanan lunas</span>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl font-black">
                     <i class="fa-solid fa-sack-dollar"></i>
                 </div>
             </div>
 
             <!-- Total Katalog Menu -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex items-center justify-between">
                 <div>
-                    <span class="text-[11px] font-bold text-amber-600 uppercase tracking-wider block">Total Menu Aktif</span>
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest block">Total Menu</span>
                     <h3 class="text-2xl font-black text-slate-900 mt-1"><?= $total_menu ?> Menu</h3>
-                    <span class="text-[11px] text-rose-500 mt-0.5 block"><?= $total_menu_habis ?> menu sedang habis</span>
+                    <span class="text-xs text-slate-500 mt-1 block"><?= $total_menu_habis ?> menu sedang habis</span>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl font-black">
                     <i class="fa-solid fa-utensils"></i>
                 </div>
             </div>
 
             <!-- Mode Kasir Link -->
-            <a href="../kasir/index.php" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between hover:border-indigo-400 transition group">
+            <a href="../kasir/index.php" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-orange-300 transition flex items-center justify-between group">
                 <div>
-                    <span class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider block">Akses Kasir</span>
-                    <h3 class="text-base font-black text-slate-900 mt-1 group-hover:text-indigo-600 transition">Buka Antrean & Cetak</h3>
-                    <span class="text-[11px] text-slate-400 mt-0.5 block">Monitor pesanan dapur</span>
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest block">Akses Kasir</span>
+                    <h3 class="text-base font-black text-slate-900 mt-1 group-hover:text-orange-600 transition">Buka Layar Kasir</h3>
+                    <span class="text-xs text-slate-500 mt-1 block">Monitor pesanan & struk</span>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+                <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 group-hover:bg-orange-100 group-hover:text-orange-600 flex items-center justify-center text-xl font-black transition">
                     <i class="fa-solid fa-cash-register"></i>
                 </div>
             </a>
@@ -169,57 +190,100 @@ $top_menus = $pdo->query("
             
             <!-- Tabel Riwayat Transaksi Terbaru (2 Kolom) -->
             <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                <div class="p-5 border-b border-slate-200 flex items-center justify-between">
                     <div>
-                        <h3 class="font-bold text-sm text-slate-900">Riwayat Pesanan Terbaru</h3>
-                        <p class="text-xs text-slate-400">15 transaksi terakhir yang masuk ke sistem</p>
+                        <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">Aktivitas Terbaru</span>
+                        <h3 class="font-black text-base text-slate-900 mt-0.5">Riwayat Pesanan Pelanggan</h3>
                     </div>
-                    <a href="../kasir/index.php" class="text-xs text-blue-600 hover:underline font-semibold">Ke Kasir &rarr;</a>
+                    <a href="../kasir/index.php" class="text-xs font-bold text-orange-600 hover:text-orange-700 inline-flex items-center space-x-1">
+                        <span>Buka Kasir</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 text-slate-500 uppercase border-b border-slate-100 font-semibold">
+                        <thead class="bg-slate-50 text-slate-500 uppercase border-b border-slate-200 font-bold text-[11px]">
                             <tr>
-                                <th class="p-3">Kode / Meja</th>
-                                <th class="p-3">Pelanggan</th>
-                                <th class="p-3">Total Tagihan</th>
-                                <th class="p-3">Status Bayar</th>
-                                <th class="p-3">Waktu</th>
+                                <th class="py-3 px-4">Kode & Meja</th>
+                                <th class="py-3 px-3">Pelanggan</th>
+                                <th class="py-3 px-3">Total Tagihan</th>
+                                <th class="py-3 px-3 text-center">Pembayaran</th>
+                                <th class="py-3 px-3 text-center">Status Dapur</th>
+                                <th class="py-3 px-4 text-right">Waktu</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             <?php if (empty($riwayat_orders)): ?>
                                 <tr>
-                                    <td colspan="5" class="p-6 text-center text-slate-400">Belum ada transaksi.</td>
+                                    <td colspan="6" class="py-8 text-center text-slate-400">Belum ada transaksi.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($riwayat_orders as $ro): ?>
-                                    <tr class="hover:bg-slate-50 transition">
-                                        <td class="p-3">
-                                            <span class="font-bold text-slate-800 block"><?= htmlspecialchars($ro['kode_pesanan']) ?></span>
-                                            <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">
-                                                Meja #<?= htmlspecialchars($ro['nomor_meja']) ?>
+                                    <tr class="hover:bg-orange-50/50 transition">
+                                        <td class="py-3.5 px-4">
+                                            <span class="font-extrabold text-slate-900 block"><?= htmlspecialchars($ro['kode_pesanan']) ?></span>
+                                            <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full uppercase border border-orange-200 inline-block mt-0.5">
+                                                Meja <?= htmlspecialchars($ro['nomor_meja']) ?>
                                             </span>
                                         </td>
-                                        <td class="p-3 font-semibold text-slate-700">
+                                        <td class="py-3.5 px-3 font-semibold text-slate-700">
                                             <?= htmlspecialchars($ro['nama_pelanggan']) ?>
                                         </td>
-                                        <td class="p-3 font-bold text-slate-900">
+                                        <td class="py-3.5 px-3 font-black text-slate-900">
                                             <?= format_rupiah($ro['total_harga']) ?>
                                         </td>
-                                        <td class="p-3">
+                                        <td class="py-3.5 px-3 text-center">
                                             <?php if ($ro['status_pembayaran'] === 'lunas'): ?>
-                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                                <span class="px-2.5 py-1 bg-orange-500 text-white text-[10px] font-bold rounded-lg shadow-sm inline-block">
                                                     LUNAS
                                                 </span>
                                             <?php else: ?>
-                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
-                                                    BELUM BAYAR
-                                                </span>
+                                                <form action="../kasir/update_status.php" method="POST" class="inline">
+                                                    <input type="hidden" name="order_id" value="<?= $ro['id'] ?>">
+                                                    <input type="hidden" name="action" value="set_lunas">
+                                                    <button type="submit" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10px] rounded-lg shadow-sm transition active:scale-95" title="Klik untuk validasi pembayaran">
+                                                        Set Lunas
+                                                    </button>
+                                                </form>
                                             <?php endif; ?>
                                         </td>
-                                        <td class="p-3 text-slate-400 text-[11px]">
+                                        <td class="py-3.5 px-3 text-center">
+                                            <div class="inline-flex items-center gap-1">
+                                                <?php if ($ro['status_pesanan'] === 'menunggu'): ?>
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                                                        Menunggu
+                                                    </span>
+                                                    <form action="../kasir/update_status.php" method="POST" class="inline">
+                                                        <input type="hidden" name="order_id" value="<?= $ro['id'] ?>">
+                                                        <input type="hidden" name="status_pesanan" value="dimasak">
+                                                        <button type="submit" class="px-2 py-0.5 rounded bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10px] transition active:scale-95" title="Mulai masak">
+                                                            Masak
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($ro['status_pesanan'] === 'dimasak'): ?>
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-800 border border-orange-200">
+                                                        Dimasak
+                                                    </span>
+                                                    <form action="../kasir/update_status.php" method="POST" class="inline">
+                                                        <input type="hidden" name="order_id" value="<?= $ro['id'] ?>">
+                                                        <input type="hidden" name="status_pesanan" value="selesai">
+                                                        <button type="submit" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] transition active:scale-95" title="Selesaikan & antar">
+                                                            Selesai
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($ro['status_pesanan'] === 'selesai'): ?>
+                                                    <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                                        <i class="fa-solid fa-check mr-0.5"></i> Selesai
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">
+                                                        Batal
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                        <td class="py-3.5 px-4 text-slate-400 text-right">
                                             <?= date('d M, H:i', strtotime($ro['created_at'])) ?>
                                         </td>
                                     </tr>
@@ -233,31 +297,28 @@ $top_menus = $pdo->query("
             <!-- Menu Terlaris (1 Kolom) -->
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
                 <div>
-                    <div class="border-b border-slate-100 pb-3 mb-4">
-                        <h3 class="font-bold text-sm text-slate-900 flex items-center space-x-2">
-                            <i class="fa-solid fa-trophy text-amber-500"></i>
-                            <span>Menu Terlaris</span>
-                        </h3>
-                        <p class="text-xs text-slate-400">Berdasarkan pesanan lunas</p>
+                    <div class="border-b border-slate-200 pb-3 mb-4">
+                        <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">Favorit Pelanggan</span>
+                        <h3 class="font-black text-base text-slate-900 mt-0.5">Menu Paling Laris</h3>
                     </div>
 
                     <div class="space-y-3">
                         <?php if (empty($top_menus)): ?>
-                            <p class="text-xs text-slate-400 text-center py-6">Belum ada data penjualan menu lunas.</p>
+                            <p class="text-xs text-slate-400 text-center py-6">Belum ada penjualan menu lunas.</p>
                         <?php else: ?>
                             <?php foreach ($top_menus as $idx => $tm): ?>
-                                <div class="flex items-center justify-between text-xs border-b border-slate-50 pb-2">
-                                    <div class="flex items-center space-x-2.5">
-                                        <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-[10px]">
+                                <div class="flex items-center justify-between text-xs p-2.5 rounded-xl hover:bg-orange-50/50 transition">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-7 h-7 rounded-xl bg-orange-100 text-orange-600 font-black text-xs flex items-center justify-center">
                                             <?= $idx + 1 ?>
-                                        </span>
+                                        </div>
                                         <div>
-                                            <h4 class="font-bold text-slate-800"><?= htmlspecialchars($tm['nama_menu']) ?></h4>
+                                            <h4 class="font-bold text-slate-900 leading-tight"><?= htmlspecialchars($tm['nama_menu']) ?></h4>
                                             <span class="text-[10px] text-slate-400 capitalize"><?= $tm['kategori'] ?></span>
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="font-bold text-emerald-600 block"><?= $tm['total_terjual'] ?> terjual</span>
+                                        <span class="font-black text-orange-600 block"><?= $tm['total_terjual'] ?> porsi</span>
                                         <span class="text-[10px] text-slate-400"><?= format_rupiah($tm['total_pendapatan']) ?></span>
                                     </div>
                                 </div>
@@ -267,8 +328,8 @@ $top_menus = $pdo->query("
                 </div>
 
                 <div class="mt-5 pt-4 border-t border-slate-100">
-                    <a href="menu.php" class="w-full block py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center rounded-xl transition">
-                        Kelola Semua Menu &rarr;
+                    <a href="menu.php" class="w-full py-2.5 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 border border-slate-200 text-slate-700 font-bold text-xs text-center rounded-xl transition block">
+                        Kelola Katalog Menu &rarr;
                     </a>
                 </div>
             </div>
@@ -277,9 +338,15 @@ $top_menus = $pdo->query("
 
     </main>
 
-    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-400">
-        Panel Admin Resto & Cafe &bull; PHP Native &bull; <?= date('Y') ?>
+    <!-- Footer Persis Landing Page -->
+    <footer class="bg-slate-900 text-slate-400 mt-auto pt-8 pb-6 border-t border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+            <span>&copy; <?= date('Y') ?> Resto Enak Rasa. All rights reserved.</span>
+            <span>Panel Khusus Administrator Resto</span>
+        </div>
     </footer>
+
+    <!-- Modal Scanner QR Code -->
+    <?php include_once __DIR__ . '/../components/scanner_modal.php'; ?>
 </body>
 </html>
-
