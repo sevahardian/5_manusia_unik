@@ -238,29 +238,54 @@ $orders = $stmt->fetchAll();
         </div>
     </main>
 
-    <!-- Script Polling Otomatis Tiap 5 Detik -->
+    <!-- Script Kasir: Polling Realtime & Barcode Scanner Gun Otomatis -->
     <script>
-        async function fetchOrders() {
+        function fetchOrders() {
             const icon = document.getElementById('refresh-icon');
-            icon.classList.add('fa-spin');
+            if (icon) icon.classList.add('fa-spin');
+            window.location.reload();
+        }
 
+        // Cek pesanan baru masuk dari pembeli secara otomatis
+        let currentTotalOrders = <?= count($orders) ?>;
+        async function checkIncomingOrders() {
             try {
                 const response = await fetch('../api/get_orders.php');
                 const result = await response.json();
                 if (result.status === 'success') {
-                    // Update tampilan realtime tanpa refresh halaman jika jumlah order bertambah
-                    // Untuk kemudahan hackathon, jika ada pesanan baru kita update badge
-                    console.log('Polling berhasil, order count:', result.count);
+                    if (result.count !== currentTotalOrders) {
+                        window.location.reload();
+                    }
                 }
             } catch (e) {
-                console.error('Polling gagal:', e);
-            } finally {
-                setTimeout(() => icon.classList.remove('fa-spin'), 600);
+                // Ignore network hiccup
             }
         }
+        setInterval(checkIncomingOrders, 3500);
 
-        // Jalankan polling setiap 5 detik
-        setInterval(fetchOrders, 5000);
+        // Dukungan Barcode Scanner Gun Fisik di Meja Kasir (Scan Langsung Tervalidasi Otomatis)
+        let barcodeBuffer = '';
+        let barcodeTimer = null;
+
+        document.addEventListener('keydown', function(e) {
+            // Abaikan bila kasir sedang fokus mengetik di input teks biasa
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                if (e.target.id !== 'manual-order-code') return;
+            }
+
+            if (e.key === 'Enter') {
+                if (barcodeBuffer.trim().length >= 4) {
+                    const scannedCode = barcodeBuffer.trim();
+                    barcodeBuffer = '';
+                    openScannerModal();
+                    processScanAndAutoValidate(scannedCode);
+                }
+            } else if (e.key.length === 1) {
+                barcodeBuffer += e.key;
+                clearTimeout(barcodeTimer);
+                barcodeTimer = setTimeout(() => { barcodeBuffer = ''; }, 300);
+            }
+        });
     </script>
 
     <!-- Modal Scanner QR Code -->

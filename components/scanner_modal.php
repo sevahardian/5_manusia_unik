@@ -128,6 +128,7 @@
     let cameraList = [];
     let currentCameraIndex = 0;
     let isScanningActive = false;
+    let orderWasValidated = false;
 
     // Suara Beep via Web Audio API saat scan berhasil
     function playScannerBeep() {
@@ -157,6 +158,7 @@
         document.getElementById('manual-order-code').value = '';
         hideScannerAlert();
         document.getElementById('scan-result-card').classList.add('hidden');
+        orderWasValidated = false;
         
         startCameraScanner();
     }
@@ -166,6 +168,12 @@
         modal.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
         stopCameraScanner();
+
+        // Jika ada pesanan yang divalidasi, refresh tampilan halaman kasir/admin seketika
+        if (orderWasValidated) {
+            orderWasValidated = false;
+            window.location.reload();
+        }
     }
 
     async function startCameraScanner() {
@@ -260,6 +268,7 @@
 
             if (json.status === 'success' && json.data) {
                 currentScannedOrder = json.data;
+                orderWasValidated = true;
                 displayScannedOrder(json.data, true);
                 showScannerAlert('✅ Berhasil divalidasi otomatis! Pesanan sudah LUNAS & langsung diteruskan ke dapur.', 'success');
 

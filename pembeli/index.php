@@ -94,9 +94,10 @@ $daftar_menu = $stmt->fetchAll();
                     <div class="bg-white rounded-2xl p-3 border border-slate-200 flex space-x-3 shadow-sm hover:shadow-md transition">
                         <!-- Gambar -->
                         <div class="w-24 h-24 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 relative">
-                            <img src="<?= htmlspecialchars($m['gambar'] ?: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300') ?>" 
+                            <img src="<?= htmlspecialchars(get_menu_image($m['gambar'])) ?>" 
                                  alt="<?= htmlspecialchars($m['nama_menu']) ?>" 
-                                 class="w-full h-full object-cover">
+                                 class="w-full h-full object-cover"
+                                 onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300'">
                             <span class="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded backdrop-blur-xs capitalize">
                                 <?= $m['kategori'] ?>
                             </span>
@@ -110,7 +111,7 @@ $daftar_menu = $stmt->fetchAll();
                             </div>
                             <div class="flex items-center justify-between mt-2">
                                 <span class="font-bold text-orange-600 text-sm"><?= format_rupiah($m['harga']) ?></span>
-                                <button onclick="addToCart(<?= $m['id'] ?>, '<?= addslashes(htmlspecialchars($m['nama_menu'])) ?>', <?= $m['harga'] ?>, '<?= addslashes(htmlspecialchars($m['gambar'])) ?>')" 
+                                <button onclick="addToCart(<?= $m['id'] ?>, '<?= addslashes(htmlspecialchars($m['nama_menu'])) ?>', <?= $m['harga'] ?>, '<?= addslashes(htmlspecialchars(get_menu_image($m['gambar']))) ?>')" 
                                         class="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold flex items-center space-x-1 shadow-sm active:scale-95 transition">
                                     <i class="fa-solid fa-plus text-[10px]"></i>
                                     <span>Tambah</span>

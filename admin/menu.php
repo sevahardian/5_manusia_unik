@@ -9,6 +9,7 @@ require_once __DIR__ . '/../config/helper.php';
 check_auth('admin');
 
 $pesan = '';
+$pesan_tipe = 'sukses';
 
 // Handle Tambah Menu
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'tambah') {
@@ -16,18 +17,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $kategori  = sanitize($_POST['kategori'] ?? 'makanan');
     $harga     = (int)($_POST['harga'] ?? 0);
     $deskripsi = sanitize($_POST['deskripsi'] ?? '');
-    $gambar    = trim($_POST['gambar'] ?? '');
     $status    = sanitize($_POST['status'] ?? 'tersedia');
+    $gambar    = '';
 
-    if (!empty($nama_menu) && $harga > 0) {
+    // Handle Upload File Gambar
+    if (isset($_FILES['gambar_file']) && $_FILES['gambar_file']['error'] === UPLOAD_ERR_OK) {
+        $file_tmp  = $_FILES['gambar_file']['tmp_name'];
+        $file_name = $_FILES['gambar_file']['name'];
+        $file_size = $_FILES['gambar_file']['size'];
+        $file_ext  = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'webp'];
+        if (in_array($file_ext, $allowed_ext)) {
+            // Maksimal ukuran 5 MB
+            if ($file_size <= 5 * 1024 * 1024) {
+                $new_filename = 'menu_' . time() . '_' . substr(md5(uniqid()), 0, 8) . '.' . $file_ext;
+                $upload_dir   = __DIR__ . '/../uploads/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0777, true);
+                }
+                $destination = $upload_dir . $new_filename;
+
+                if (move_uploaded_file($file_tmp, $destination)) {
+                    $gambar = 'uploads/' . $new_filename;
+                } else {
+                    $pesan = 'Gagal menyimpan file gambar ke folder uploads!';
+                    $pesan_tipe = 'gagal';
+                }
+            } else {
+                $pesan = 'Ukuran file gambar maksimal 5MB!';
+                $pesan_tipe = 'gagal';
+            }
+        } else {
+            $pesan = 'Format file gambar tidak didukung! Gunakan format JPG, PNG, atau WEBP.';
+            $pesan_tipe = 'gagal';
+        }
+    }
+
+    // Jika tidak ada upload gambar atau upload gagal tapi form tetap diisi, gunakan placeholder default
+    if (empty($gambar) && $pesan_tipe !== 'gagal') {
+        $gambar = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400';
+    }
+
+    if (empty($pesan) && !empty($nama_menu) && $harga > 0) {
         $stmt = $pdo->prepare("
             INSERT INTO menus (nama_menu, kategori, harga, deskripsi, gambar, status)
             VALUES (?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([$nama_menu, $kategori, $harga, $deskripsi, $gambar, $status]);
         $pesan = "Menu \"$nama_menu\" berhasil ditambahkan!";
-    } else {
+        $pesan_tipe = 'sukses';
+    } elseif (empty($pesan)) {
         $pesan = 'Nama menu dan harga valid wajib diisi!';
+        $pesan_tipe = 'gagal';
     }
 }
 
@@ -35,11 +77,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 if (isset($_GET['hapus'])) {
     $id_hapus = (int)$_GET['hapus'];
     try {
+        // Ambil info gambar lokal jika ada untuk dihapus fisiknya
+        $stmt_img = $pdo->prepare("SELECT gambar FROM menus WHERE id = ?");
+        $stmt_img->execute([$id_hapus]);
+        $old_img = $stmt_img->fetchColumn();
+
         $stmt = $pdo->prepare("DELETE FROM menus WHERE id = ?");
         $stmt->execute([$id_hapus]);
+
+        // Hapus file fisik jika tersimpan di folder uploads
+        if (!empty($old_img) && strpos($old_img, 'uploads/') === 0) {
+            $full_path = __DIR__ . '/../' . $old_img;
+            if (file_exists($full_path)) {
+                @unlink($full_path);
+            }
+        }
+
         $pesan = 'Menu berhasil dihapus dari katalog!';
+        $pesan_tipe = 'sukses';
     } catch (Exception $e) {
-        $pesan = 'Menu tidak dapat dihapus karena sudah memiliki riwayat pemesanan.';
+        $pesan = 'Menu tidak dapat dihapus karena sudah memiliki riwayat pemesanan pelanggan.';
+        $pesan_tipe = 'gagal';
     }
 }
 
@@ -114,12 +172,12 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
 
         <!-- Notifikasi Pesan -->
         <?php if (!empty($pesan)): ?>
-            <div class="bg-orange-50 text-orange-800 border border-orange-200 px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-sm">
+            <div class="<?= $pesan_tipe === 'sukses' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200' ?> border px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-sm">
                 <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-circle-info text-orange-600 text-sm"></i>
+                    <i class="fa-solid <?= $pesan_tipe === 'sukses' ? 'fa-circle-check text-emerald-600' : 'fa-circle-exclamation text-rose-600' ?> text-sm"></i>
                     <span><?= htmlspecialchars($pesan) ?></span>
                 </div>
-                <a href="menu.php" class="text-xs font-bold text-orange-700 underline">Tutup</a>
+                <a href="menu.php" class="text-xs font-bold underline opacity-70 hover:opacity-100">Tutup</a>
             </div>
         <?php endif; ?>
 
@@ -132,7 +190,7 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                     <h2 class="font-black text-base text-slate-900 mt-0.5">Tambah Menu Baru</h2>
                 </div>
 
-                <form action="menu.php" method="POST" class="space-y-4 text-xs">
+                <form action="menu.php" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
                     <input type="hidden" name="action" value="tambah">
 
                     <div>
@@ -163,10 +221,34 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                                   class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition"></textarea>
                     </div>
 
+                    <!-- Input Upload File Gambar dari Komputer -->
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">URL Gambar (Unsplash / Online):</label>
-                        <input type="url" name="gambar" placeholder="https://images.unsplash.com/..." 
-                               class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition">
+                        <label class="block font-bold text-slate-700 mb-1.5">
+                            <i class="fa-solid fa-image text-orange-500 mr-1"></i> Foto / Gambar Menu:
+                        </label>
+                        <div class="relative border-2 border-dashed border-slate-300 hover:border-orange-500 rounded-2xl p-4 text-center cursor-pointer bg-slate-50 hover:bg-orange-50/30 transition group">
+                            <input type="file" name="gambar_file" id="gambar_file" accept="image/jpeg,image/png,image/webp,image/jpg" 
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewUploadImage(this)">
+                            
+                            <!-- Placeholder Awal -->
+                            <div id="upload-placeholder" class="space-y-1.5 py-1">
+                                <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mx-auto text-lg group-hover:scale-110 transition shadow-sm">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                </div>
+                                <p class="font-bold text-slate-700 text-xs">Pilih file gambar dari komputer</p>
+                                <p class="text-[10px] text-slate-400">Format: JPG, PNG, atau WEBP (Maks. 5MB)</p>
+                            </div>
+
+                            <!-- Preview Setelah Dipilih -->
+                            <div id="upload-preview-box" class="hidden flex items-center space-x-3 text-left">
+                                <img id="upload-preview-img" src="#" alt="Preview" class="w-14 h-14 rounded-xl object-cover border border-slate-200 bg-white flex-shrink-0 shadow-sm">
+                                <div class="min-w-0 flex-1">
+                                    <p id="upload-preview-name" class="font-bold text-slate-800 text-xs truncate">nama_file.jpg</p>
+                                    <p id="upload-preview-size" class="text-[10px] text-slate-400">0 KB</p>
+                                    <span class="inline-block text-[10px] text-orange-600 font-bold mt-0.5">Klik untuk mengganti file</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -214,7 +296,7 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                                     <tr class="hover:bg-orange-50/50 transition">
                                         <td class="py-3.5 px-4">
                                             <div class="flex items-center space-x-3">
-                                                <img src="<?= htmlspecialchars($m['gambar'] ?: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100') ?>" 
+                                                <img src="<?= htmlspecialchars(get_menu_image($m['gambar'])) ?>" 
                                                      alt="<?= htmlspecialchars($m['nama_menu']) ?>"
                                                      class="w-12 h-12 rounded-xl object-cover bg-slate-100 border border-slate-200 flex-shrink-0"
                                                      onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100'">
@@ -266,6 +348,31 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
             <span>Panel Khusus Administrator Resto</span>
         </div>
     </footer>
+
+    <!-- Script Preview Gambar Upload -->
+    <script>
+        function previewUploadImage(input) {
+            const placeholder = document.getElementById('upload-placeholder');
+            const previewBox = document.getElementById('upload-preview-box');
+            const previewImg = document.getElementById('upload-preview-img');
+            const previewName = document.getElementById('upload-preview-name');
+            const previewSize = document.getElementById('upload-preview-size');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                previewName.innerText = file.name;
+                previewSize.innerText = (file.size / 1024).toFixed(1) + ' KB';
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    placeholder.classList.add('hidden');
+                    previewBox.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 
     <!-- Modal Scanner QR Code -->
     <?php include_once __DIR__ . '/../components/scanner_modal.php'; ?>

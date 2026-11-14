@@ -43,3 +43,16 @@ function check_auth($required_role = null) {
     }
 }
 
+/**
+ * Helper untuk mendapatkan URL gambar menu (baik upload lokal maupun URL eksternal)
+ */
+function get_menu_image($gambar, $base_depth = '..') {
+    if (empty($gambar)) {
+        return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400';
+    }
+    if (preg_match('/^https?:\/\//i', $gambar)) {
+        return $gambar;
+    }
+    return rtrim($base_depth, '/') . '/' . ltrim($gambar, '/');
+}
+
