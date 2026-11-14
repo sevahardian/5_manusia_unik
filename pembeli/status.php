@@ -489,10 +489,10 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=10&da
 
     </main>
 
-    <!-- TOAST NOTIFICATION -->
+    <!-- TOAST NOTIFICATION (Cerah & Bersih) -->
     <div id="toast" class="fixed top-20 right-4 z-50 pointer-events-none transform -translate-y-4 opacity-0 transition-all duration-300 no-print">
-        <div class="bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2.5 border border-slate-700">
-            <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+        <div class="bg-white text-slate-800 px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2.5 border border-orange-200">
+            <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
             <span id="toast-msg" class="text-xs font-bold">Kode pesanan disalin!</span>
         </div>
     </div>

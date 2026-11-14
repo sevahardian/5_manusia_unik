@@ -411,11 +411,11 @@ $stat_omzet    = $pdo->query("SELECT SUM(total_harga) FROM orders WHERE status_p
 
     </main>
 
-    <!-- Footer Kasir -->
-    <footer class="bg-slate-900 text-slate-400 mt-auto pt-6 pb-5 border-t border-slate-800">
+    <!-- Footer Kasir Cerah & Bersih (Bukan Gelap) -->
+    <footer class="bg-white text-slate-500 mt-auto pt-6 pb-6 border-t border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2 text-center sm:text-left">
             <span>&copy; <?= date('Y') ?> Resto Enak Rasa. All rights reserved.</span>
-            <span>Panel Kasir & Dapur Layar Sentuh / Desktop</span>
+            <span class="font-semibold text-brand-600">Panel Kasir & Dapur Layar Sentuh / Desktop</span>
         </div>
     </footer>
 

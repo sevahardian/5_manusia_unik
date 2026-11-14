@@ -269,42 +269,42 @@ if (isset($_GET['meja']) && !empty($_GET['meja'])) {
         </div>
     </section>
 
-    <!-- Footer Responsive -->
-    <footer id="tentang" class="bg-slate-900 text-slate-400 mt-auto pt-10 sm:pt-12 pb-6 border-t border-slate-800">
+    <!-- Footer Responsive (Cerah & Bersih - Warm Culinary Style) -->
+    <footer id="tentang" class="bg-white text-slate-600 mt-auto pt-10 sm:pt-12 pb-6 border-t border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 pb-8 border-b border-slate-800 text-left">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 pb-8 border-b border-slate-200 text-left">
                 <div class="sm:col-span-2 md:col-span-1">
-                    <div class="flex items-center space-x-2.5 text-white mb-3">
-                        <div class="w-8 h-8 rounded-xl bg-orange-500 flex items-center justify-center font-bold text-sm">
+                    <div class="flex items-center space-x-2.5 text-slate-900 mb-3">
+                        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-sm text-white shadow-md shadow-orange-500/25">
                             <i class="fa-solid fa-utensils"></i>
                         </div>
-                        <span class="font-extrabold text-base tracking-tight">Resto Enak Rasa</span>
+                        <span class="font-extrabold text-base tracking-tight text-slate-900">Resto Enak Rasa</span>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed">
+                    <p class="text-xs text-slate-500 leading-relaxed">
                         Menyajikan aneka masakan nusantara dengan cita rasa otentik dan kemudahan pemesanan mandiri melalui meja Anda.
                     </p>
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Jam Operasional</h4>
-                    <p class="text-xs text-slate-400">Senin - Minggu: 10:00 - 22:00 WIB</p>
-                    <p class="text-xs text-slate-400 mt-1">Pelayanan Dapur Terakhir: 21:30 WIB</p>
+                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Jam Operasional</h4>
+                    <p class="text-xs text-slate-500">Senin - Minggu: 10:00 - 22:00 WIB</p>
+                    <p class="text-xs text-slate-500 mt-1">Pelayanan Dapur Terakhir: 21:30 WIB</p>
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3">Lokasi Resto</h4>
-                    <p class="text-xs text-slate-400">Jl. Hackathon Inovasi No. 123, Lantai 1</p>
-                    <p class="text-xs text-slate-400 mt-1">WhatsApp Reservasi: 0812-3456-7890</p>
+                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Lokasi Resto</h4>
+                    <p class="text-xs text-slate-500">Jl. Hackathon Inovasi No. 123, Lantai 1</p>
+                    <p class="text-xs text-slate-500 mt-1">WhatsApp Reservasi: 0812-3456-7890</p>
                 </div>
             </div>
 
             <!-- Bagian Hak Cipta & Pintu Masuk Petugas -->
-            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-3 text-center sm:text-left">
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400 gap-3 text-center sm:text-left">
                 <span>&copy; <?= date('Y') ?> Resto Enak Rasa. All rights reserved.</span>
 
                 <!-- Section Akses Login Petugas Disembunyikan (Discreet) -->
-                <div class="opacity-50 hover:opacity-100 transition-opacity">
-                    <a href="admin/login.php" class="text-slate-400 hover:text-slate-200 flex items-center space-x-1" title="Akses Khusus Kasir & Admin">
+                <div>
+                    <a href="admin/login.php" class="text-slate-400 hover:text-orange-600 transition flex items-center space-x-1" title="Akses Khusus Kasir & Admin">
                         <i class="fa-solid fa-lock text-[9px]"></i>
                         <span>Akses Petugas</span>
                     </a>

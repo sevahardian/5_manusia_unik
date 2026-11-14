@@ -261,7 +261,7 @@ foreach ($semua_menu as $m) {
 
                                     <!-- Badge Stok Habis Jika Ada -->
                                     <?php if ($is_habis): ?>
-                                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center">
+                                        <div class="absolute inset-0 bg-[#1a0f0a]/70 backdrop-blur-sm flex items-center justify-center">
                                             <span class="bg-red-500 text-white text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider shadow-md">
                                                 Stok Habis
                                             </span>
@@ -391,20 +391,20 @@ foreach ($semua_menu as $m) {
 
     </main>
 
-    <!-- FLOATING BOTTOM BAR (Hanya Tampil di Mobile & Tablet, Tersembunyi di Desktop lg:) -->
+    <!-- FLOATING BOTTOM BAR (Cerah, Bersih & Modern) -->
     <div id="floating-cart" class="lg:hidden fixed bottom-4 left-4 right-4 z-40 max-w-lg mx-auto hidden">
         <a href="cart.php" 
-           class="bg-slate-900 text-white rounded-2xl p-3.5 flex items-center justify-between shadow-2xl hover:bg-black transition-all border border-slate-700/80 active:scale-95">
+           class="bg-white/95 backdrop-blur-md rounded-2xl p-3.5 flex items-center justify-between shadow-2xl border-2 border-orange-500 hover:border-orange-600 transition-all active:scale-95">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-brand-500 text-white flex items-center justify-center font-black text-sm shadow-md">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center font-black text-sm shadow-md shadow-orange-500/30">
                     <span id="floating-count">0</span>
                 </div>
                 <div>
-                    <div class="text-[11px] text-slate-400 font-medium">Total Pesanan Meja #<?= htmlspecialchars($meja) ?>:</div>
-                    <div id="floating-total" class="font-black text-sm text-brand-400">Rp 0</div>
+                    <div class="text-[11px] text-slate-500 font-bold">Total Pesanan Meja #<?= htmlspecialchars($meja) ?>:</div>
+                    <div id="floating-total" class="font-black text-base text-orange-600">Rp 0</div>
                 </div>
             </div>
-            <div class="flex items-center space-x-1.5 text-xs font-bold text-white bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl border border-white/10 transition">
+            <div class="flex items-center space-x-1.5 text-xs font-black text-white bg-orange-500 hover:bg-orange-600 px-4 py-2.5 rounded-xl shadow-md shadow-orange-500/25 transition">
                 <span>Lihat Pesanan</span>
                 <i class="fa-solid fa-arrow-right text-[10px]"></i>
             </div>
@@ -412,7 +412,7 @@ foreach ($semua_menu as $m) {
     </div>
 
     <!-- MODAL GANTI NOMOR MEJA -->
-    <div id="table-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div id="table-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center space-x-2">
@@ -453,10 +453,10 @@ foreach ($semua_menu as $m) {
         </div>
     </div>
 
-    <!-- TOAST NOTIFIKASI FEEDBACK -->
+    <!-- TOAST NOTIFIKASI FEEDBACK (Cerah) -->
     <div id="toast" class="fixed top-20 right-4 z-50 pointer-events-none transform -translate-y-4 opacity-0 transition-all duration-300">
-        <div class="bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2.5 border border-slate-700">
-            <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+        <div class="bg-white text-slate-800 px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2.5 border border-orange-200">
+            <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
             <span id="toast-msg" class="text-xs font-bold">Menu ditambahkan ke keranjang!</span>
         </div>
     </div>

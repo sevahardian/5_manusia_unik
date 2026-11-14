@@ -378,11 +378,11 @@ $top_menus = $pdo->query("
 
     </main>
 
-    <!-- Footer Persis Landing Page -->
-    <footer class="bg-slate-900 text-slate-400 mt-auto pt-8 pb-6 border-t border-slate-800">
+    <!-- Footer Cerah & Bersih (Bukan Gelap) -->
+    <footer class="bg-white text-slate-500 mt-auto pt-6 pb-6 border-t border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2 text-center sm:text-left">
             <span>&copy; <?= date('Y') ?> Resto Enak Rasa. All rights reserved.</span>
-            <span>Panel Khusus Administrator Resto</span>
+            <span class="font-semibold text-orange-600">Panel Khusus Administrator Resto</span>
         </div>
     </footer>
 
