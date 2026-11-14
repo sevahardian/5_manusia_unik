@@ -1,6 +1,6 @@
 <?php
 // pembeli/status.php
-// [BAGIAN 2: PROGRAMMER 2] Halaman Pelacakan Status Pesanan Pembeli
+// Halaman Pelacakan Status Pesanan & Validasi Pembayaran Anti-Fake Order
 
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/helper.php';
@@ -12,7 +12,21 @@ if ($order_id <= 0) {
     exit;
 }
 
-// Ambil data order
+// Handle simulasi bayar / demo validasi QRIS langsung dari HP
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['simulasi_bayar'])) {
+    $stmt_pay = $pdo->prepare("
+        UPDATE orders 
+        SET status_pembayaran = 'lunas',
+            status_pesanan = CASE WHEN status_pesanan = 'menunggu' THEN 'dimasak' ELSE status_pesanan END,
+            metode_pembayaran = 'QRIS'
+        WHERE id = ?
+    ");
+    $stmt_pay->execute([$order_id]);
+    header("Location: status.php?order_id={$order_id}&verified=1");
+    exit;
+}
+
+// Ambil data order terbaru
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ?");
 $stmt->execute([$order_id]);
 $order = $stmt->fetch();
@@ -30,133 +44,324 @@ $stmt_items = $pdo->prepare("
 ");
 $stmt_items->execute([$order_id]);
 $items = $stmt_items->fetchAll();
+
+// Generate data isi QR Code Validasi Pesanan
+$qr_content = "RESTO-ENAK-RASA:ORDER=" . $order['kode_pesanan'] . ":MEJA=" . $order['nomor_meja'] . ":TOTAL=" . $order['total_harga'];
+$qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=" . urlencode($qr_content);
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="10"> <!-- Auto refresh tiap 10 detik -->
-    <title>Status Pesanan #<?= htmlspecialchars($order['kode_pesanan']) ?></title>
+    <title>Status & Pembayaran Pesanan #<?= htmlspecialchars($order['kode_pesanan']) ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen pb-20 text-slate-800">
+<body class="bg-gradient-to-b from-orange-50/60 to-slate-50 min-h-screen pb-24 text-slate-800">
 
-    <header class="bg-white border-b border-slate-200 px-4 py-3 shadow-sm sticky top-0 z-30">
+    <!-- Top Bar -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-sm">
         <div class="max-w-md mx-auto flex items-center justify-between">
-            <a href="index.php?meja=<?= htmlspecialchars($order['nomor_meja']) ?>" class="text-xs text-orange-600 font-bold flex items-center space-x-1">
+            <a href="index.php?meja=<?= htmlspecialchars($order['nomor_meja']) ?>" class="text-xs text-orange-600 hover:text-orange-700 font-bold flex items-center space-x-1 transition">
                 <i class="fa-solid fa-arrow-left"></i>
-                <span>Pesan Menu Lain</span>
+                <span>Katalog Menu</span>
             </a>
-            <span class="text-xs text-slate-400 flex items-center space-x-1">
-                <i class="fa-solid fa-rotate fa-spin text-[10px]"></i>
-                <span>Auto Update (10s)</span>
-            </span>
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-600 font-bold text-xs border border-orange-200">
+                    <i class="fa-solid fa-chair text-[10px]"></i> Meja #<?= htmlspecialchars($order['nomor_meja']) ?>
+                </span>
+                <span id="auto-refresh-badge" class="text-[11px] text-slate-400 flex items-center space-x-1">
+                    <i class="fa-solid fa-rotate fa-spin text-[10px] text-orange-500"></i>
+                    <span class="text-[10px]">Live</span>
+                </span>
+            </div>
         </div>
     </header>
 
     <main class="max-w-md mx-auto px-4 mt-5 space-y-4">
-        <!-- Status Card -->
-        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center">
-            <?php if ($order['status_pesanan'] === 'menunggu'): ?>
-                <div class="w-20 h-20 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-3xl mx-auto mb-4 animate-pulse">
-                    <i class="fa-solid fa-clock"></i>
-                </div>
-                <span class="inline-block px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold rounded-full mb-2">
-                    Menunggu Konfirmasi Kasir
-                </span>
-                <h2 class="text-lg font-bold text-slate-900">Pesanan Diterima!</h2>
-                <p class="text-xs text-slate-500 mt-1">Kasir sedang memverifikasi pesanan Anda.</p>
 
-            <?php elseif ($order['status_pesanan'] === 'dimasak'): ?>
-                <div class="w-20 h-20 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-3xl mx-auto mb-4 animate-bounce">
-                    <i class="fa-solid fa-fire-burner"></i>
-                </div>
-                <span class="inline-block px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold rounded-full mb-2">
-                    Sedang Dimasak
-                </span>
-                <h2 class="text-lg font-bold text-slate-900">Dapur Sedang Menyiapkan!</h2>
-                <p class="text-xs text-slate-500 mt-1">Mohon ditunggu sebentar ya, makanan segera disajikan.</p>
-
-            <?php elseif ($order['status_pesanan'] === 'selesai'): ?>
-                <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto mb-4">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-                <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-full mb-2">
-                    Pesanan Selesai / Disajikan
-                </span>
-                <h2 class="text-lg font-bold text-slate-900">Selamat Menikmati!</h2>
-                <p class="text-xs text-slate-500 mt-1">Terima kasih sudah memesan di Resto kami.</p>
-
-            <?php else: ?>
-                <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-4">
-                    <i class="fa-solid fa-ban"></i>
-                </div>
-                <h2 class="text-lg font-bold text-rose-600">Pesanan Dibatalkan</h2>
-            <?php endif; ?>
-        </div>
-
-        <!-- Detail Pesanan Card -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-            <div class="border-b border-slate-100 pb-3 mb-3">
-                <div class="flex justify-between items-center text-xs text-slate-500 mb-1">
-                    <span>Kode Pesanan:</span>
-                    <span class="font-mono font-bold text-slate-800"><?= htmlspecialchars($order['kode_pesanan']) ?></span>
-                </div>
-                <div class="flex justify-between items-center text-xs text-slate-500 mb-1">
-                    <span>Nomor Meja:</span>
-                    <span class="font-bold text-orange-600">Meja #<?= htmlspecialchars($order['nomor_meja']) ?></span>
-                </div>
-                <div class="flex justify-between items-center text-xs text-slate-500">
-                    <span>Nama Pelanggan:</span>
-                    <span class="font-semibold text-slate-800"><?= htmlspecialchars($order['nama_pelanggan']) ?></span>
+        <!-- Banner Anti-Fake Order / Validasi Status Pembayaran -->
+        <?php if ($order['status_pembayaran'] !== 'lunas'): ?>
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 mt-0.5 shadow-sm">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-xs text-amber-900 uppercase tracking-wide">Validasi Pembayaran Diperlukan</h3>
+                        <p class="text-xs text-amber-800 mt-1 leading-relaxed">
+                            Untuk mencegah <b>pemesanan fiktif</b>, pesanan ini <b>baru akan dimasak oleh dapur</b> setelah Anda menyelesaikan pembayaran via <b>QRIS</b> atau <b>Tunai di Kasir</b>.
+                        </p>
+                    </div>
                 </div>
             </div>
+        <?php else: ?>
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 shadow-sm flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-sm">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-xs text-emerald-900 uppercase tracking-wide">Pembayaran Terverifikasi (LUNAS)</h3>
+                    <p class="text-xs text-emerald-700 mt-0.5">Pesanan Anda telah divalidasi dan aman dari pembatalan.</p>
+                </div>
+            </div>
+        <?php endif; ?>
 
-            <!-- List Menu Dipesan -->
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Item Menu:</h3>
-            <div class="space-y-2 mb-4">
-                <?php foreach ($items as $item): ?>
-                    <div class="flex justify-between items-start text-xs border-b border-slate-50 pb-2">
+        <!-- Kartu Utama: Validasi QR & Pembayaran -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-xl text-center relative overflow-hidden">
+            
+            <?php if ($order['status_pembayaran'] !== 'lunas'): ?>
+                <!-- Navigasi Tab Pilihan Metode Pembayaran -->
+                <div class="flex bg-slate-100 p-1 rounded-xl mb-5 text-xs font-bold">
+                    <button type="button" id="tab-btn-qris" onclick="switchPaymentTab('qris')" class="flex-1 py-2 rounded-lg bg-white text-orange-600 shadow-sm transition flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>Bayar QRIS</span>
+                    </button>
+                    <button type="button" id="tab-btn-cash" onclick="switchPaymentTab('cash')" class="flex-1 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        <span>Bayar Tunai di Kasir</span>
+                    </button>
+                </div>
+
+                <!-- Tampilan 1: QRIS -->
+                <div id="view-qris" class="space-y-4">
+                    <div>
+                        <span class="text-[10px] font-black tracking-widest text-orange-600 uppercase bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200">
+                            Scan QRIS Pembayaran
+                        </span>
+                        <h2 class="text-lg font-black text-slate-900 mt-2">Scan & Bayar Otomatis</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Bisa pakai GoPay, OVO, Dana, ShopeePay, BCA, atau Livin'</p>
+                    </div>
+
+                    <!-- QR Code Frame -->
+                    <div class="relative w-56 h-56 mx-auto bg-white p-3 rounded-2xl border-2 border-orange-500/80 shadow-md">
+                        <!-- Corner Accents -->
+                        <div class="absolute -top-1 -left-1 w-4 h-4 border-t-4 border-l-4 border-orange-600 rounded-tl"></div>
+                        <div class="absolute -top-1 -right-1 w-4 h-4 border-t-4 border-r-4 border-orange-600 rounded-tr"></div>
+                        <div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-4 border-l-4 border-orange-600 rounded-bl"></div>
+                        <div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-4 border-r-4 border-orange-600 rounded-br"></div>
+
+                        <img src="<?= $qr_url ?>" alt="QRIS Validasi" class="w-full h-full object-contain rounded-xl">
+                    </div>
+
+                    <!-- Total Nominal Tagihan -->
+                    <div class="bg-orange-50/70 border border-orange-100 rounded-2xl p-3.5">
+                        <span class="text-[11px] text-slate-500 block">Total Nominal Tagihan:</span>
+                        <span class="text-2xl font-black text-orange-600 block mt-0.5"><?= format_rupiah($order['total_harga']) ?></span>
+                        <span class="text-[10px] font-mono font-bold text-slate-400 mt-0.5 block"><?= htmlspecialchars($order['kode_pesanan']) ?></span>
+                    </div>
+
+                    <!-- Tombol Simulasi Pembayaran QRIS (Sangat berguna saat demo/testing) -->
+                    <form action="status.php?order_id=<?= $order['id'] ?>" method="POST">
+                        <input type="hidden" name="simulasi_bayar" value="1">
+                        <button type="submit" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-extrabold rounded-xl text-xs shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Simulasi: Saya Sudah Bayar QRIS</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Tampilan 2: Tunai / Cash di Kasir -->
+                <div id="view-cash" class="space-y-4 hidden">
+                    <div>
+                        <span class="text-[10px] font-black tracking-widest text-slate-600 uppercase bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                            QR Validasi Kasir
+                        </span>
+                        <h2 class="text-lg font-black text-slate-900 mt-2">Tunjukkan QR Ini ke Kasir</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Petugas kasir akan men-scan atau memvalidasi pembayaran tunai Anda</p>
+                    </div>
+
+                    <!-- QR Validasi Kasir -->
+                    <div class="relative w-56 h-56 mx-auto bg-white p-3 rounded-2xl border-2 border-slate-300 shadow-md">
+                        <img src="<?= $qr_url ?>" alt="QR Validasi Kasir" class="w-full h-full object-contain rounded-xl">
+                    </div>
+
+                    <!-- Info Tagihan Tunai -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-left space-y-1.5 text-xs">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Nomor Meja:</span>
+                            <span class="font-bold text-orange-600">Meja #<?= htmlspecialchars($order['nomor_meja']) ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Kode Pesanan:</span>
+                            <span class="font-mono font-bold text-slate-800"><?= htmlspecialchars($order['kode_pesanan']) ?></span>
+                        </div>
+                        <div class="flex justify-between border-t border-slate-200 pt-1.5 font-bold">
+                            <span class="text-slate-700">Total Uang Pas:</span>
+                            <span class="text-sm font-black text-slate-900"><?= format_rupiah($order['total_harga']) ?></span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-800 text-left flex items-start space-x-2">
+                        <i class="fa-solid fa-bell text-amber-600 mt-0.5"></i>
+                        <span>Segera bayar ke kasir agar pesanan tidak dibatalkan otomatis oleh sistem.</span>
+                    </div>
+                </div>
+
+            <?php else: ?>
+                <!-- Keadaan Jika Sudah LUNAS -->
+                <div class="py-4 space-y-4">
+                    <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-4xl mx-auto shadow-inner">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-extrabold rounded-full mb-1">
+                            LUNAS via <?= htmlspecialchars($order['metode_pembayaran'] ?: 'QRIS') ?>
+                        </span>
+                        <h2 class="text-xl font-black text-slate-900">Pembayaran Sah & Berhasil!</h2>
+                        <p class="text-xs text-slate-500 mt-1">Dapur kami sudah menerima pesanan Anda dan siap memasaknya.</p>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center justify-between text-left">
                         <div>
-                            <span class="font-bold text-slate-800"><?= $item['jumlah'] ?>x <?= htmlspecialchars($item['nama_menu']) ?></span>
+                            <span class="text-[11px] text-slate-400 block">Kode Struk Digital:</span>
+                            <span class="font-mono font-bold text-slate-800 text-sm"><?= htmlspecialchars($order['kode_pesanan']) ?></span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[11px] text-slate-400 block">Total Dibayar:</span>
+                            <span class="font-black text-emerald-600 text-base"><?= format_rupiah($order['total_harga']) ?></span>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+        </div>
+
+        <!-- Status Alur Dapur Realtime -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
+            <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider mb-4 flex items-center space-x-1.5">
+                <i class="fa-solid fa-fire-burner text-orange-500"></i>
+                <span>Proses Dapur & Pelayanan:</span>
+            </h3>
+
+            <div class="space-y-4 relative">
+                <!-- Garis Penghubung Alur -->
+                <div class="absolute left-4 top-4 bottom-4 w-0.5 bg-slate-200 -z-0"></div>
+
+                <!-- Tahap 1: Validasi Pembayaran -->
+                <div class="flex items-center space-x-3.5 relative z-10">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm <?= $order['status_pembayaran'] === 'lunas' ? 'bg-emerald-500 text-white' : 'bg-orange-500 text-white animate-pulse' ?>">
+                        <i class="fa-solid <?= $order['status_pembayaran'] === 'lunas' ? 'fa-check' : 'fa-receipt' ?>"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs <?= $order['status_pembayaran'] === 'lunas' ? 'text-slate-900' : 'text-orange-600' ?>">
+                            <?= $order['status_pembayaran'] === 'lunas' ? 'Pembayaran Tervalidasi' : 'Menunggu Validasi Bayar / QR' ?>
+                        </h4>
+                        <p class="text-[11px] text-slate-400">Kasir memvalidasi transaksi Anda</p>
+                    </div>
+                </div>
+
+                <!-- Tahap 2: Sedang Dimasak -->
+                <div class="flex items-center space-x-3.5 relative z-10">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm <?= in_array($order['status_pesanan'], ['dimasak', 'selesai']) ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-400' ?>">
+                        <i class="fa-solid fa-fire-burner"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs <?= $order['status_pesanan'] === 'dimasak' ? 'text-orange-600 font-black' : 'text-slate-700' ?>">
+                            <?= $order['status_pesanan'] === 'dimasak' ? 'Sedang Dimasak Koki Resto 🔥' : 'Antrean Memasak Dapur' ?>
+                        </h4>
+                        <p class="text-[11px] text-slate-400">Hidangan disiapkan secara higienis</p>
+                    </div>
+                </div>
+
+                <!-- Tahap 3: Disajikan -->
+                <div class="flex items-center space-x-3.5 relative z-10">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm <?= $order['status_pesanan'] === 'selesai' ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-400' ?>">
+                        <i class="fa-solid fa-bell-concierge"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs <?= $order['status_pesanan'] === 'selesai' ? 'text-emerald-700 font-black' : 'text-slate-700' ?>">
+                            Makanan Diantar ke Meja Anda
+                        </h4>
+                        <p class="text-[11px] text-slate-400">Pelayan mengantarkan tepat ke meja #<?= htmlspecialchars($order['nomor_meja']) ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Rincian Menu Dipesan -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Item Menu yang Dipesan:</h3>
+            <div class="space-y-3 mb-4">
+                <?php foreach ($items as $item): ?>
+                    <div class="flex justify-between items-start text-xs border-b border-slate-100 pb-2.5 last:border-b-0 last:pb-0">
+                        <div>
+                            <span class="font-extrabold text-slate-900"><?= $item['jumlah'] ?>x <?= htmlspecialchars($item['nama_menu']) ?></span>
                             <?php if (!empty($item['catatan'])): ?>
-                                <p class="text-[11px] text-slate-400 italic">"<?= htmlspecialchars($item['catatan']) ?>"</p>
+                                <p class="text-[11px] text-orange-600 italic mt-0.5">Note: "<?= htmlspecialchars($item['catatan']) ?>"</p>
                             <?php endif; ?>
                         </div>
-                        <span class="font-semibold text-slate-700"><?= format_rupiah($item['subtotal']) ?></span>
+                        <span class="font-bold text-slate-800"><?= format_rupiah($item['subtotal']) ?></span>
                     </div>
                 <?php endforeach; ?>
             </div>
 
-            <!-- Total Biaya & Status Pembayaran -->
-            <div class="border-t border-slate-100 pt-3 flex justify-between items-center">
-                <div>
-                    <span class="text-xs text-slate-400 block">Total Pembayaran:</span>
-                    <span class="text-base font-bold text-orange-600"><?= format_rupiah($order['total_harga']) ?></span>
-                </div>
-                <div>
-                    <?php if ($order['status_pembayaran'] === 'lunas'): ?>
-                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">
-                            <i class="fa-solid fa-check mr-1"></i>LUNAS
-                        </span>
-                    <?php else: ?>
-                        <span class="px-2.5 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">
-                            <i class="fa-solid fa-hourglass-half mr-1"></i>BAYAR DI KASIR
-                        </span>
-                    <?php endif; ?>
-                </div>
+            <!-- Total Ringkasan -->
+            <div class="border-t border-slate-100 pt-3 flex justify-between items-center text-xs">
+                <span class="font-semibold text-slate-500">Total Tagihan:</span>
+                <span class="text-base font-black text-orange-600"><?= format_rupiah($order['total_harga']) ?></span>
             </div>
         </div>
 
-        <div class="text-center">
+        <!-- Tombol Aksi Tambahan -->
+        <div class="space-y-2 pt-2">
             <a href="index.php?meja=<?= htmlspecialchars($order['nomor_meja']) ?>" 
-               class="inline-block w-full py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-xs transition">
-                Kembali ke Katalog Menu
+               class="block w-full py-3 bg-white hover:bg-orange-50 hover:text-orange-600 text-slate-700 font-bold rounded-2xl text-xs text-center border border-slate-200 shadow-sm transition">
+                + Tambah Pesanan / Menu Lain
             </a>
         </div>
+
     </main>
+
+    <script>
+        function switchPaymentTab(tab) {
+            const btnQris = document.getElementById('tab-btn-qris');
+            const btnCash = document.getElementById('tab-btn-cash');
+            const viewQris = document.getElementById('view-qris');
+            const viewCash = document.getElementById('view-cash');
+
+            if (tab === 'qris') {
+                btnQris.className = 'flex-1 py-2 rounded-lg bg-white text-orange-600 shadow-sm transition flex items-center justify-center space-x-1.5';
+                btnCash.className = 'flex-1 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center space-x-1.5';
+                viewQris.classList.remove('hidden');
+                viewCash.classList.add('hidden');
+            } else {
+                btnCash.className = 'flex-1 py-2 rounded-lg bg-white text-orange-600 shadow-sm transition flex items-center justify-center space-x-1.5';
+                btnQris.className = 'flex-1 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center space-x-1.5';
+                viewCash.classList.remove('hidden');
+                viewQris.classList.add('hidden');
+            }
+        }
+
+        // Auto refresh checking setiap 6 detik agar status otomatis berubah saat kasir menekan tombol "Set Lunas"
+        const currentPaidStatus = "<?= $order['status_pembayaran'] ?>";
+        const currentOrderStatus = "<?= $order['status_pesanan'] ?>";
+
+        async function checkLiveStatus() {
+            try {
+                const res = await fetch(`../api/get_orders.php`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const list = data.data || data.orders || [];
+                    const thisOrder = list.find(o => o.id == <?= $order['id'] ?>);
+                    if (thisOrder) {
+                        if (thisOrder.status_pembayaran !== currentPaidStatus || thisOrder.status_pesanan !== currentOrderStatus) {
+                            window.location.reload();
+                        }
+                    }
+                }
+            } catch (err) {
+                // Silently ignore network hiccup
+            }
+        }
+
+        setInterval(checkLiveStatus, 5000);
+    </script>
 </body>
 </html>
-
