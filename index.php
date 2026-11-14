@@ -13,7 +13,7 @@ if (isset($_GET['meja']) && !empty($_GET['meja'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resto Enak Rasa - Pesan Makanan Langsung Dari Meja</title>
+    <title>KanDar - Pesan Makanan Langsung Dari Meja</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,7 +35,7 @@ if (isset($_GET['meja']) && !empty($_GET['meja'])) {
                     <i class="fa-solid fa-utensils"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
+                    <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">KanDar</span>
                     <span class="text-[9px] sm:text-[10px] text-orange-600 font-semibold tracking-wider uppercase block">Self-Service Dining</span>
                 </div>
             </a>
@@ -278,7 +278,7 @@ if (isset($_GET['meja']) && !empty($_GET['meja'])) {
                         <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center font-bold text-sm text-white shadow-md shadow-orange-500/25">
                             <i class="fa-solid fa-utensils"></i>
                         </div>
-                        <span class="font-extrabold text-base tracking-tight text-slate-900">Resto Enak Rasa</span>
+                        <span class="font-extrabold text-base tracking-tight text-slate-900">KanDar</span>
                     </div>
                     <p class="text-xs text-slate-500 leading-relaxed">
                         Menyajikan aneka masakan nusantara dengan cita rasa otentik dan kemudahan pemesanan mandiri melalui meja Anda.
@@ -300,7 +300,7 @@ if (isset($_GET['meja']) && !empty($_GET['meja'])) {
 
             <!-- Bagian Hak Cipta & Pintu Masuk Petugas -->
             <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400 gap-3 text-center sm:text-left">
-                <span>&copy; <?= date('Y') ?> Resto Enak Rasa. All rights reserved.</span>
+                <span>&copy; <?= date('Y') ?> KanDar. All rights reserved.</span>
 
                 <!-- Section Akses Login Petugas Disembunyikan (Discreet) -->
                 <div>

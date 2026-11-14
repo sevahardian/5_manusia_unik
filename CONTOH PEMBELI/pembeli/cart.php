@@ -20,7 +20,7 @@ $meja = $_SESSION['meja'] ?? $_SESSION['nomor_meja'] ?? '01';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Keranjang Pesanan - Meja #<?= htmlspecialchars($meja) ?> | Resto Enak Rasa</title>
+    <title>Keranjang Pesanan - Meja #<?= htmlspecialchars($meja) ?> | KanDar</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>

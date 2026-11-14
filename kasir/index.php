@@ -32,7 +32,7 @@ $stat_omzet    = $pdo->query("SELECT SUM(total_harga) FROM orders WHERE status_p
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Layar Kasir & Dapur - Resto Enak Rasa</title>
+    <title>Layar Kasir & Dapur - KanDar</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -81,7 +81,7 @@ $stat_omzet    = $pdo->query("SELECT SUM(total_harga) FROM orders WHERE status_p
                     <i class="fa-solid fa-cash-register"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
+                    <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">KanDar</span>
                     <div class="flex items-center space-x-1.5">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span class="text-[10px] text-brand-600 font-bold uppercase tracking-wider block">Layar Kasir & Dapur</span>
@@ -414,7 +414,7 @@ $stat_omzet    = $pdo->query("SELECT SUM(total_harga) FROM orders WHERE status_p
     <!-- Footer Kasir Cerah & Bersih (Bukan Gelap) -->
     <footer class="bg-white text-slate-500 mt-auto pt-6 pb-6 border-t border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2 text-center sm:text-left">
-            <span>&copy; <?= date('Y') ?> Resto Enak Rasa. All rights reserved.</span>
+            <span>&copy; <?= date('Y') ?> KanDar. All rights reserved.</span>
             <span class="font-semibold text-brand-600">Panel Kasir & Dapur Layar Sentuh / Desktop</span>
         </div>
     </footer>

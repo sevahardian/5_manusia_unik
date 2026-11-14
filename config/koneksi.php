@@ -18,7 +18,7 @@ try {
 } catch (PDOException $e) {
     // Tampilkan pesan jika database belum dibuat / koneksi gagal
     die("<div style='font-family: sans-serif; padding: 20px; background: #fee2e2; color: #991b1b; border-radius: 8px;'>
-            <h3>⚠️ Gagal Terhubung ke Database!</h3>
+            <h3>[PERINGATAN] Gagal Terhubung ke Database!</h3>
             <p>Pastikan MySQL (XAMPP/Laragon) sudah menyala dan database <b>`{$db_name}`</b> sudah di-import dari file <code>database/database.sql</code>.</p>
             <small>Pesan Error: " . htmlspecialchars($e->getMessage()) . "</small>
          </div>");

@@ -34,7 +34,7 @@ $order = $stmt->fetch();
 
 if (!$order) {
     die("<div style='font-family:sans-serif; text-align:center; padding:50px;'>
-            <h2>⚠️ Pesanan Tidak Ditemukan</h2>
+            <h2><i class='fa-solid fa-circle-exclamation text-amber-500'></i> Pesanan Tidak Ditemukan</h2>
             <p>Data pesanan dengan ID #{$order_id} tidak tersedia di database.</p>
             <a href='index.php' style='display:inline-block; margin-top:15px; padding:10px 20px; background:#f97316; color:#fff; text-decoration:none; border-radius:8px;'>Kembali ke Menu</a>
          </div>");
@@ -63,7 +63,7 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=10&da
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Status Pesanan #<?= htmlspecialchars($order['kode_pesanan']) ?> | Resto Enak Rasa</title>
+    <title>Status Pesanan #<?= htmlspecialchars($order['kode_pesanan']) ?> | KanDar</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -352,7 +352,7 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=10&da
                             </div>
                             <div class="pt-1">
                                 <h4 class="font-bold text-sm <?= $order['status_pesanan'] === 'dimasak' ? 'text-brand-600 font-extrabold' : ($step2_done ? 'text-slate-900' : 'text-slate-500') ?>">
-                                    <?= $order['status_pesanan'] === 'dimasak' ? 'Sedang Dimasak Koki Resto 🔥' : ($step2_done ? 'Selesai Dimasak' : 'Antrean Dapur') ?>
+                                    <?= $order['status_pesanan'] === 'dimasak' ? 'Sedang Dimasak Koki Resto' : ($step2_done ? 'Selesai Dimasak' : 'Antrean Dapur') ?>
                                 </h4>
                                 <p class="text-xs text-slate-400 mt-0.5">Bahan-bahan segar dimasak secara higienis oleh chef resto.</p>
                             </div>
@@ -368,7 +368,7 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=10&da
                             </div>
                             <div class="pt-1">
                                 <h4 class="font-bold text-sm <?= $step3_done ? 'text-emerald-700 font-black' : 'text-slate-500' ?>">
-                                    <?= $step3_done ? 'Hidangan Telah Disajikan di Meja Anda ✨' : 'Pengantaran ke Meja' ?>
+                                    <?= $step3_done ? 'Hidangan Telah Disajikan di Meja Anda' : 'Pengantaran ke Meja' ?>
                                 </h4>
                                 <p class="text-xs text-slate-400 mt-0.5">Pelayan mengantarkan pesanan langsung ke meja #<?= htmlspecialchars($order['nomor_meja']) ?>.</p>
                             </div>
@@ -390,7 +390,7 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=10&da
                         <div class="w-12 h-12 rounded-2xl bg-brand-500 text-white flex items-center justify-center font-bold text-xl mx-auto mb-2 shadow-md shadow-brand-500/25">
                             <i class="fa-solid fa-utensils"></i>
                         </div>
-                        <h2 class="font-black text-lg text-slate-900 tracking-tight">Resto Enak Rasa</h2>
+                        <h2 class="font-black text-lg text-slate-900 tracking-tight">KanDar</h2>
                         <p class="text-[11px] text-slate-400 mt-0.5">Sistem Self-Service Dining Meja</p>
                     </div>
 

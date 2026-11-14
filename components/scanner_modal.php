@@ -113,7 +113,7 @@
 
         <!-- Footer Modal -->
         <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
-            <span>Sistem POS Resto Enak Rasa</span>
+            <span>Sistem POS KanDar</span>
             <button type="button" onclick="closeScannerModal()" class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg transition">
                 Tutup Scanner
             </button>
@@ -270,7 +270,7 @@
                 currentScannedOrder = json.data;
                 orderWasValidated = true;
                 displayScannedOrder(json.data, true);
-                showScannerAlert('✅ Berhasil divalidasi otomatis! Pesanan sudah LUNAS & langsung diteruskan ke dapur.', 'success');
+                showScannerAlert('Berhasil divalidasi otomatis! Pesanan sudah LUNAS & langsung diteruskan ke dapur.', 'success');
 
                 // Trigger update realtime pada kasir/admin
                 if (typeof fetchOrders === 'function') {

@@ -41,7 +41,7 @@ foreach ($semua_menu as $m) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menu Restoran - Meja #<?= htmlspecialchars($meja) ?> | Resto Enak Rasa</title>
+    <title>Menu Restoran - Meja <?= htmlspecialchars($meja) ?> | KanDar</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -92,7 +92,7 @@ foreach ($semua_menu as $m) {
                             <i class="fa-solid fa-utensils"></i>
                         </div>
                         <div>
-                            <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
+                            <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">KanDar</span>
                             <span class="text-[10px] text-brand-600 font-semibold tracking-wider uppercase block">Self-Service Dining</span>
                         </div>
                     </a>
@@ -106,7 +106,7 @@ foreach ($semua_menu as $m) {
                             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold border border-brand-200 transition active:scale-95 shadow-sm" 
                             title="Klik untuk ubah nomor meja">
                         <i class="fa-solid fa-chair text-[11px] text-brand-600"></i>
-                        <span>Meja #<span id="label-table-no"><?= htmlspecialchars($meja) ?></span></span>
+                        <span>Meja <span id="label-table-no"><?= htmlspecialchars($meja) ?></span></span>
                         <i class="fa-solid fa-pen text-[9px] text-brand-500 ml-0.5"></i>
                     </button>
 
@@ -141,7 +141,7 @@ foreach ($semua_menu as $m) {
                             <i class="fa-solid fa-sparkles text-amber-200"></i> Menu Self-Service QR
                         </div>
                         <h1 class="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight">
-                            Selamat Datang di Meja #<?= htmlspecialchars($meja) ?>!
+                            Selamat Datang di Meja <?= htmlspecialchars($meja) ?>
                         </h1>
                         <p class="text-xs sm:text-sm text-brand-100 mt-1 leading-relaxed">
                             Pesan makanan & minuman langsung dari tempat duduk Anda. Pesanan otomatis masuk ke kasir dan dapur resto.
@@ -177,7 +177,7 @@ foreach ($semua_menu as $m) {
                         <button onclick="setCategoryFilter('semua')" 
                                 id="tab-semua"
                                 class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'semua' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🔥 Semua</span>
+                            <span><i class="fa-solid fa-fire text-xs mr-1"></i>Semua</span>
                             <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'semua' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
                                 <?= $count_kategori['semua'] ?>
                             </span>
@@ -186,7 +186,7 @@ foreach ($semua_menu as $m) {
                         <button onclick="setCategoryFilter('makanan')" 
                                 id="tab-makanan"
                                 class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'makanan' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🍛 Makanan</span>
+                            <span><i class="fa-solid fa-bowl-food text-xs mr-1"></i>Makanan</span>
                             <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'makanan' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
                                 <?= $count_kategori['makanan'] ?>
                             </span>
@@ -195,7 +195,7 @@ foreach ($semua_menu as $m) {
                         <button onclick="setCategoryFilter('minuman')" 
                                 id="tab-minuman"
                                 class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'minuman' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🥤 Minuman</span>
+                            <span><i class="fa-solid fa-mug-hot text-xs mr-1"></i>Minuman</span>
                             <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'minuman' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
                                 <?= $count_kategori['minuman'] ?>
                             </span>
@@ -204,7 +204,7 @@ foreach ($semua_menu as $m) {
                         <button onclick="setCategoryFilter('snack')" 
                                 id="tab-snack"
                                 class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'snack' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🍟 Cemilan</span>
+                            <span><i class="fa-solid fa-cookie-bite text-xs mr-1"></i>Cemilan</span>
                             <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'snack' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
                                 <?= $count_kategori['snack'] ?>
                             </span>
@@ -276,7 +276,7 @@ foreach ($semua_menu as $m) {
                                             <?= htmlspecialchars($m['nama_menu']) ?>
                                         </h3>
                                         <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                                            <?= htmlspecialchars($m['deskripsi'] ?: 'Menu lezat pilihan resep istimewa Resto Enak Rasa.') ?>
+                                            <?= htmlspecialchars($m['deskripsi'] ?: 'Menu lezat pilihan resep istimewa KanDar.') ?>
                                         </p>
                                     </div>
 
@@ -338,7 +338,7 @@ foreach ($semua_menu as $m) {
                             </div>
                             <div>
                                 <h2 class="font-extrabold text-sm text-slate-900">Keranjang Pesanan</h2>
-                                <span class="text-[11px] text-slate-400">Meja #<span class="desktop-table-label"><?= htmlspecialchars($meja) ?></span></span>
+                                <span class="text-[11px] text-slate-400">Meja <span class="desktop-table-label"><?= htmlspecialchars($meja) ?></span></span>
                             </div>
                         </div>
                         <button onclick="clearCartConfirm()" class="text-xs text-red-500 hover:text-red-700 font-semibold" title="Kosongkan Keranjang">
@@ -400,7 +400,7 @@ foreach ($semua_menu as $m) {
                     <span id="floating-count">0</span>
                 </div>
                 <div>
-                    <div class="text-[11px] text-slate-500 font-bold">Total Pesanan Meja #<?= htmlspecialchars($meja) ?>:</div>
+                    <div class="text-[11px] text-slate-500 font-bold">Total Pesanan Meja <?= htmlspecialchars($meja) ?>:</div>
                     <div id="floating-total" class="font-black text-base text-orange-600">Rp 0</div>
                 </div>
             </div>

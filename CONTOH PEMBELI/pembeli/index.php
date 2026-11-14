@@ -41,7 +41,7 @@ foreach ($semua_menu as $m) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menu Restoran - Meja #<?= htmlspecialchars($meja) ?> | Resto Enak Rasa</title>
+    <title>Menu Restoran - Meja #<?= htmlspecialchars($meja) ?> | KanDar</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -92,7 +92,7 @@ foreach ($semua_menu as $m) {
                             <i class="fa-solid fa-utensils"></i>
                         </div>
                         <div>
-                            <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
+                            <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">KanDar</span>
                             <span class="text-[10px] text-brand-600 font-semibold tracking-wider uppercase block">Self-Service Dining</span>
                         </div>
                     </a>
@@ -177,7 +177,7 @@ foreach ($semua_menu as $m) {
                         <button onclick="setCategoryFilter('semua')" 
                                 id="tab-semua"
                                 class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'semua' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🔥 Semua</span>
+                            <span><i class="fa-solid fa-fire text-xs mr-1"></i>Semua</span>
                             <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'semua' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
                                 <?= $count_kategori['semua'] ?>
                             </span>
@@ -186,7 +186,7 @@ foreach ($semua_menu as $m) {
                         <button onclick="setCategoryFilter('makanan')" 
                                 id="tab-makanan"
                                 class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'makanan' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🍛 Makanan</span>
+                            <span><i class="fa-solid fa-bowl-food text-xs mr-1"></i>Makanan</span>
                             <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'makanan' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
                                 <?= $count_kategori['makanan'] ?>
                             </span>
@@ -195,7 +195,7 @@ foreach ($semua_menu as $m) {
                         <button onclick="setCategoryFilter('minuman')" 
                                 id="tab-minuman"
                                 class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'minuman' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🥤 Minuman</span>
+                            <span><i class="fa-solid fa-mug-hot text-xs mr-1"></i>Minuman</span>
                             <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'minuman' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
                                 <?= $count_kategori['minuman'] ?>
                             </span>
@@ -204,7 +204,7 @@ foreach ($semua_menu as $m) {
                         <button onclick="setCategoryFilter('snack')" 
                                 id="tab-snack"
                                 class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'snack' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🍟 Cemilan</span>
+                            <span><i class="fa-solid fa-cookie-bite text-xs mr-1"></i>Cemilan</span>
                             <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'snack' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
                                 <?= $count_kategori['snack'] ?>
                             </span>
@@ -275,7 +275,7 @@ foreach ($semua_menu as $m) {
                                             <?= htmlspecialchars($m['nama_menu']) ?>
                                         </h3>
                                         <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                                            <?= htmlspecialchars($m['deskripsi'] ?: 'Menu lezat pilihan resep istimewa Resto Enak Rasa.') ?>
+                                            <?= htmlspecialchars($m['deskripsi'] ?: 'Menu lezat pilihan resep istimewa KanDar.') ?>
                                         </p>
                                     </div>
 

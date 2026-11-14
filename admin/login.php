@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Petugas - Resto Enak Rasa</title>
+    <title>Login Petugas - KanDar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center mx-auto mb-3 text-2xl shadow-md shadow-orange-500/20">
                 <i class="fa-solid fa-utensils"></i>
             </div>
-            <h2 class="font-black text-2xl text-slate-900">Resto Enak Rasa</h2>
+            <h2 class="font-black text-2xl text-slate-900">KanDar</h2>
             <span class="text-[11px] text-orange-600 font-semibold tracking-wider uppercase block mt-0.5">Portal Masuk Petugas</span>
             <p class="text-xs text-slate-500 mt-1">Akses khusus kasir dan staf resto</p>
         </div>

@@ -34,6 +34,7 @@ $items = $stmt_items->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Struk #<?= htmlspecialchars($order['kode_pesanan']) ?></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -107,14 +108,14 @@ $items = $stmt_items->fetchAll();
 <body>
 
     <div class="no-print">
-        <button class="btn-print" onclick="window.print()">🖨️ Cetak Struk Sekarang</button>
+        <button class="btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Cetak Struk Sekarang</button>
         <button class="btn-print" style="background:#4b5563;" onclick="window.close()">Tutup</button>
     </div>
 
     <div class="struk-card">
         <!-- Header Struk -->
         <div class="text-center">
-            <h2 style="margin: 0; font-size: 16px;">RESTO ENAK RASA</h2>
+            <h2 style="margin: 0; font-size: 16px;">KanDar</h2>
             <p style="margin: 2px 0; font-size: 11px;">Jl. Hackathon Inovasi No. 123</p>
             <p style="margin: 2px 0; font-size: 11px;">Telp: 0812-3456-7890</p>
         </div>

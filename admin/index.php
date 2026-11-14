@@ -52,7 +52,7 @@ $top_menus = $pdo->query("
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - Resto Enak Rasa</title>
+    <title>Dashboard Admin - KanDar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -72,7 +72,7 @@ $top_menus = $pdo->query("
                     <i class="fa-solid fa-utensils"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
+                    <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">KanDar</span>
                     <span class="text-[9px] sm:text-[10px] text-orange-600 font-semibold tracking-wider uppercase block">Admin Backoffice</span>
                 </div>
             </a>
@@ -381,7 +381,7 @@ $top_menus = $pdo->query("
     <!-- Footer Cerah & Bersih (Bukan Gelap) -->
     <footer class="bg-white text-slate-500 mt-auto pt-6 pb-6 border-t border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2 text-center sm:text-left">
-            <span>&copy; <?= date('Y') ?> Resto Enak Rasa. All rights reserved.</span>
+            <span>&copy; <?= date('Y') ?> KanDar. All rights reserved.</span>
             <span class="font-semibold text-orange-600">Panel Khusus Administrator Resto</span>
         </div>
     </footer>
