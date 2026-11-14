@@ -52,17 +52,23 @@ $orders = $stmt->fetchAll();
             </div>
 
             <div class="flex items-center space-x-2 text-xs">
+                <!-- Tombol Scan QR Pesanan -->
+                <button onclick="openScannerModal()" class="px-3.5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold flex items-center space-x-1.5 shadow-md shadow-orange-500/20 active:scale-95 transition">
+                    <i class="fa-solid fa-qrcode text-sm"></i>
+                    <span>Scan QR Pesanan</span>
+                </button>
+
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                    <a href="../admin/index.php" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-500 text-white font-bold flex items-center space-x-1.5 shadow-md shadow-orange-500/20 transition">
+                    <a href="../admin/index.php" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold flex items-center space-x-1.5 transition">
                         <i class="fa-solid fa-chart-pie"></i>
                         <span>Panel Admin</span>
                     </a>
                 <?php endif; ?>
-                <button onclick="fetchOrders()" class="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center space-x-1" title="Refresh Sekarang">
+                <button onclick="fetchOrders()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center space-x-1" title="Refresh Sekarang">
                     <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i>
                     <span class="hidden sm:inline">Refresh</span>
                 </button>
-                <a href="../admin/logout.php" onclick="return confirm('Keluar dari sesi Kasir?')" class="px-3 py-1.5 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white font-bold flex items-center space-x-1.5 transition">
+                <a href="../admin/logout.php" onclick="return confirm('Keluar dari sesi Kasir?')" class="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/20 font-bold flex items-center space-x-1.5 transition">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span class="hidden sm:inline">Logout</span>
                 </a>
@@ -256,6 +262,9 @@ $orders = $stmt->fetchAll();
         // Jalankan polling setiap 5 detik
         setInterval(fetchOrders, 5000);
     </script>
+
+    <!-- Modal Scanner QR Code -->
+    <?php include_once __DIR__ . '/../components/scanner_modal.php'; ?>
 </body>
 </html>
 

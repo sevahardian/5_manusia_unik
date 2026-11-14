@@ -86,6 +86,11 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
 
             <!-- Nav Links -->
             <div class="flex items-center space-x-2 text-xs">
+                <!-- Tombol Scan QR Pesanan -->
+                <button onclick="openScannerModal()" class="px-3.5 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-qrcode text-xs"></i>
+                    <span>Scan QR</span>
+                </button>
                 <a href="index.php" class="px-3.5 py-2 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-slate-700 font-bold rounded-xl border border-slate-200 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-chart-pie text-xs"></i>
                     <span>Overview</span>
@@ -262,5 +267,7 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
         </div>
     </footer>
 
+    <!-- Modal Scanner QR Code -->
+    <?php include_once __DIR__ . '/../components/scanner_modal.php'; ?>
 </body>
 </html>
