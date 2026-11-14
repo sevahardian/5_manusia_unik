@@ -129,23 +129,25 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-    <!-- Navbar Pelanggan & Petugas Persis Landing Page -->
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
-            <a href="index.php" class="flex items-center space-x-2.5">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-orange-500/20">
+    <!-- Navbar Admin Responsive -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            
+            <!-- Brand / Logo -->
+            <a href="index.php" class="flex items-center space-x-2 sm:space-x-2.5">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center font-bold text-base sm:text-lg shadow-md shadow-orange-500/20 flex-shrink-0">
                     <i class="fa-solid fa-utensils"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-slate-900 text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
-                    <span class="text-[10px] text-orange-600 font-semibold tracking-wider uppercase">Admin Backoffice</span>
+                    <span class="font-extrabold text-slate-900 text-base sm:text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
+                    <span class="text-[9px] sm:text-[10px] text-orange-600 font-semibold tracking-wider uppercase block">Admin Backoffice</span>
                 </div>
             </a>
 
-            <!-- Nav Links -->
-            <div class="flex items-center space-x-2 text-xs">
+            <!-- Nav Links Desktop -->
+            <div class="hidden md:flex items-center space-x-2 text-xs">
                 <!-- Tombol Scan QR Pesanan -->
-                <button onclick="openScannerModal()" class="px-3.5 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center space-x-1.5">
+                <button type="button" onclick="openScannerModal()" class="px-3.5 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-qrcode text-xs"></i>
                     <span>Scan QR</span>
                 </button>
@@ -159,16 +161,53 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                 </a>
                 <a href="../kasir/index.php" class="px-3.5 py-2 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-slate-700 font-bold rounded-xl border border-slate-200 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-cash-register text-xs"></i>
-                    <span class="hidden sm:inline">Layar Kasir</span>
+                    <span>Layar Kasir</span>
                 </a>
                 <a href="logout.php" onclick="return confirm('Keluar dari sesi Admin?')" class="p-2 text-slate-400 hover:text-rose-600 transition" title="Logout">
                     <i class="fa-solid fa-right-from-bracket text-base"></i>
                 </a>
             </div>
+
+            <!-- Tombol Aksi Mobile (Scan QR Cepat + Hamburger Toggle) -->
+            <div class="flex items-center space-x-2 md:hidden">
+                <button type="button" onclick="openScannerModal()" class="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center space-x-1 text-xs">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Scan</span>
+                </button>
+                <button type="button" onclick="toggleAdminMenu()" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition text-sm">
+                    <i class="fa-solid fa-bars" id="admin-hamburger-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu Dropdown Mobile Admin -->
+        <div id="admin-mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white/95 px-4 py-3 space-y-2 text-xs font-bold shadow-lg">
+            <a href="index.php" class="block py-2.5 px-3 rounded-xl text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition flex items-center space-x-2.5">
+                <i class="fa-solid fa-chart-pie text-sm w-4 text-orange-500"></i>
+                <span>Overview Dashboard</span>
+            </a>
+            <a href="menu.php" class="block py-2.5 px-3 rounded-xl bg-orange-50 text-orange-600 flex items-center space-x-2.5">
+                <i class="fa-solid fa-bowl-food text-sm w-4"></i>
+                <span>Kelola Katalog Menu</span>
+            </a>
+            <a href="../kasir/index.php" class="block py-2.5 px-3 rounded-xl text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition flex items-center space-x-2.5">
+                <i class="fa-solid fa-cash-register text-sm w-4 text-orange-500"></i>
+                <span>Layar Kasir & Dapur</span>
+            </a>
+            <a href="../pembeli/index.php?meja=01" target="_blank" class="block py-2.5 px-3 rounded-xl text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition flex items-center space-x-2.5">
+                <i class="fa-solid fa-arrow-up-right-from-square text-sm w-4 text-orange-500"></i>
+                <span>Preview Tampilan Pembeli</span>
+            </a>
+            <div class="pt-2 border-t border-slate-100">
+                <a href="logout.php" onclick="return confirm('Keluar dari sesi Admin?')" class="block py-2 px-3 rounded-xl text-rose-600 hover:bg-rose-50 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-right-from-bracket w-4"></i>
+                    <span>Logout Admin</span>
+                </a>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-6">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-6">
 
         <!-- Notifikasi Pesan -->
         <?php if (!empty($pesan)): ?>
@@ -183,10 +222,10 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             
-            <!-- Form Tambah Menu (Kolom Kiri) -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm sticky top-20">
+            <!-- Form Tambah Menu (Kolom Kiri di Desktop, Atas di Mobile) -->
+            <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm static lg:sticky lg:top-20">
                 <div class="pb-4 mb-4 border-b border-slate-100">
-                    <span class="text-xs font-bold text-orange-600 uppercase tracking-widest block">Form Input</span>
+                    <span class="text-[10px] sm:text-xs font-bold text-orange-600 uppercase tracking-widest block">Form Input</span>
                     <h2 class="font-black text-base text-slate-900 mt-0.5">Tambah Menu Baru</h2>
                 </div>
 
@@ -199,7 +238,7 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition" required>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Kategori:</label>
                             <select name="kategori" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition">
@@ -216,7 +255,7 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                     </div>
 
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">Deskripsi:</label>
+                        <label class="block font-bold text-slate-700 mb-1">Deskripsi Singkat:</label>
                         <textarea name="deskripsi" rows="2" placeholder="Keterangan bumbu, rasa, atau porsi..." 
                                   class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition"></textarea>
                     </div>
@@ -235,8 +274,8 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                                 <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mx-auto text-lg group-hover:scale-110 transition shadow-sm">
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                 </div>
-                                <p class="font-bold text-slate-700 text-xs">Pilih file gambar dari komputer</p>
-                                <p class="text-[10px] text-slate-400">Format: JPG, PNG, atau WEBP (Maks. 5MB)</p>
+                                <p class="font-bold text-slate-700 text-xs">Pilih foto dari HP / Komputer</p>
+                                <p class="text-[10px] text-slate-400">JPG, PNG, atau WEBP (Maks. 5MB)</p>
                             </div>
 
                             <!-- Preview Setelah Dipilih -->
@@ -245,7 +284,7 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                                 <div class="min-w-0 flex-1">
                                     <p id="upload-preview-name" class="font-bold text-slate-800 text-xs truncate">nama_file.jpg</p>
                                     <p id="upload-preview-size" class="text-[10px] text-slate-400">0 KB</p>
-                                    <span class="inline-block text-[10px] text-orange-600 font-bold mt-0.5">Klik untuk mengganti file</span>
+                                    <span class="inline-block text-[10px] text-orange-600 font-bold mt-0.5">Klik untuk ganti file</span>
                                 </div>
                             </div>
                         </div>
@@ -254,32 +293,33 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Status Ketersediaan Awal:</label>
                         <select name="status" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition">
-                            <option value="tersedia">Tersedia</option>
-                            <option value="habis">Habis</option>
+                            <option value="tersedia">Tersedia (Ready)</option>
+                            <option value="habis">Habis (Kosong)</option>
                         </select>
                     </div>
 
                     <button type="submit" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center justify-center space-x-1.5 mt-2">
                         <i class="fa-solid fa-plus text-xs"></i>
-                        <span>Simpan Menu</span>
+                        <span>Simpan Menu ke Katalog</span>
                     </button>
                 </form>
             </div>
 
-            <!-- Tabel Daftar Menu (Kolom Kanan) -->
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <!-- Tabel Daftar Menu (Kolom Kanan di Desktop) -->
+            <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                        <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">Katalog Makanan & Minuman</span>
-                        <h2 class="font-black text-base text-slate-900 mt-0.5">Daftar Menu Tersedia (<?= count($menus) ?>)</h2>
+                        <span class="text-[10px] sm:text-xs font-bold text-orange-600 uppercase tracking-widest">Katalog Resto</span>
+                        <h2 class="font-black text-sm sm:text-base text-slate-900 mt-0.5">Daftar Menu Tersedia (<?= count($menus) ?>)</h2>
                     </div>
+                    <span class="text-[11px] text-slate-400 font-semibold">Klik status untuk mengubah stok</span>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                <div class="overflow-x-auto" style="-webkit-overflow-scrolling: touch;">
+                    <table class="w-full text-left text-xs min-w-[560px]">
                         <thead class="bg-slate-50 text-slate-500 uppercase border-b border-slate-200 font-bold text-[11px]">
                             <tr>
-                                <th class="py-3 px-4">Menu</th>
+                                <th class="py-3 px-4">Menu & Foto</th>
                                 <th class="py-3 px-3">Kategori</th>
                                 <th class="py-3 px-3">Harga</th>
                                 <th class="py-3 px-3 text-center">Status</th>
@@ -294,11 +334,11 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                             <?php else: ?>
                                 <?php foreach ($menus as $m): ?>
                                     <tr class="hover:bg-orange-50/50 transition">
-                                        <td class="py-3.5 px-4">
+                                        <td class="py-3 px-4">
                                             <div class="flex items-center space-x-3">
                                                 <img src="<?= htmlspecialchars(get_menu_image($m['gambar'])) ?>" 
                                                      alt="<?= htmlspecialchars($m['nama_menu']) ?>"
-                                                     class="w-12 h-12 rounded-xl object-cover bg-slate-100 border border-slate-200 flex-shrink-0"
+                                                     class="w-12 h-12 rounded-xl object-cover bg-slate-100 border border-slate-200 flex-shrink-0 shadow-sm"
                                                      onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100'">
                                                 <div class="min-w-0">
                                                     <p class="font-bold text-slate-900 truncate"><?= htmlspecialchars($m['nama_menu']) ?></p>
@@ -306,22 +346,22 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="py-3.5 px-3">
+                                        <td class="py-3 px-3">
                                             <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-50 text-orange-600 border border-orange-200 uppercase">
                                                 <?= htmlspecialchars($m['kategori']) ?>
                                             </span>
                                         </td>
-                                        <td class="py-3.5 px-3 font-black text-slate-900">
+                                        <td class="py-3 px-3 font-black text-slate-900">
                                             <?= format_rupiah($m['harga']) ?>
                                         </td>
-                                        <td class="py-3.5 px-3 text-center">
+                                        <td class="py-3 px-3 text-center">
                                             <a href="menu.php?toggle_status=<?= $m['id'] ?>&current=<?= $m['status'] ?>" 
                                                title="Klik untuk ubah status ketersediaan"
                                                class="inline-block px-3 py-1 rounded-lg text-[10px] font-bold transition shadow-sm <?= $m['status'] === 'tersedia' ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-500 border border-slate-200' ?>">
                                                 <?= strtoupper($m['status']) ?>
                                             </a>
                                         </td>
-                                        <td class="py-3.5 px-4 text-right">
+                                        <td class="py-3 px-4 text-right">
                                             <a href="menu.php?hapus=<?= $m['id'] ?>" 
                                                onclick="return confirm('Hapus menu <?= addslashes($m['nama_menu']) ?>?')"
                                                class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition inline-block"
@@ -343,14 +383,26 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
 
     <!-- Footer Persis Landing Page -->
     <footer class="bg-slate-900 text-slate-400 mt-auto pt-8 pb-6 border-t border-slate-800">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2 text-center sm:text-left">
             <span>&copy; <?= date('Y') ?> Resto Enak Rasa. All rights reserved.</span>
             <span>Panel Khusus Administrator Resto</span>
         </div>
     </footer>
 
-    <!-- Script Preview Gambar Upload -->
+    <!-- Script Toggle Navigasi Mobile Admin & Preview Upload -->
     <script>
+        function toggleAdminMenu() {
+            const menu = document.getElementById('admin-mobile-menu');
+            const icon = document.getElementById('admin-hamburger-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.className = 'fa-solid fa-xmark text-orange-600';
+            } else {
+                menu.classList.add('hidden');
+                icon.className = 'fa-solid fa-bars';
+            }
+        }
+
         function previewUploadImage(input) {
             const placeholder = document.getElementById('upload-placeholder');
             const previewBox = document.getElementById('upload-preview-box');
