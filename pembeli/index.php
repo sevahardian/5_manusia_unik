@@ -153,60 +153,16 @@ foreach ($semua_menu as $m) {
                         <i class="fa-solid fa-bowl-food text-9xl"></i>
                     </div>
                 </div>
-
-                <!-- Card Pencarian & Kategori Tabs -->
-                <div class="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200/80 shadow-xs space-y-4">
-                    
-                    <!-- Input Pencarian Real-Time -->
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                        </div>
-                        <input type="text" 
-                               id="search-input" 
-                               placeholder="Cari makanan lezat, minuman segar, atau cemilan..." 
-                               oninput="filterMenuClient()"
-                               class="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20 transition">
-                        <button id="search-clear" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600">
-                            <i class="fa-solid fa-circle-xmark text-sm"></i>
-                        </button>
-                    </div>
-
-                    <!-- Kategori Tab Pills -->
-                    <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar pb-1 pt-1">
-                        <button onclick="setCategoryFilter('semua')" 
-                                id="tab-semua"
-                                class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'semua' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🔥 Semua</span>
-                            <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'semua' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
-                                <?= $count_kategori['semua'] ?>
-                            </span>
-                        </button>
-                        
-                        <button onclick="setCategoryFilter('makanan')" 
-                                id="tab-makanan"
-                                class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'makanan' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🍛 Makanan</span>
-                            <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'makanan' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
-                                <?= $count_kategori['makanan'] ?>
-                            </span>
-                        </button>
-
-                        <button onclick="setCategoryFilter('minuman')" 
-                                id="tab-minuman"
-                                class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'minuman' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🥤 Minuman</span>
-                            <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'minuman' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
-                                <?= $count_kategori['minuman'] ?>
-                            </span>
-                        </button>
-
-                        <button onclick="setCategoryFilter('snack')" 
-                                id="tab-snack"
-                                class="category-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 <?= $kategori_aktif === 'snack' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25 ring-2 ring-brand-500/20' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' ?>">
-                            <span>🍟 Cemilan</span>
-                            <span class="text-[10px] py-0.5 px-1.5 rounded-full <?= $kategori_aktif === 'snack' ? 'bg-white/30 text-white' : 'bg-slate-200 text-slate-600' ?>">
-                                <?= $count_kategori['snack'] ?>
+            <?php else: ?>
+                <?php foreach ($daftar_menu as $m): ?>
+                    <div class="bg-white rounded-2xl p-3 border border-slate-200 flex space-x-3 shadow-sm hover:shadow-md transition">
+                        <!-- Gambar -->
+                        <div class="w-24 h-24 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 relative">
+                            <img src="<?= htmlspecialchars($m['gambar'] ?: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300') ?>" 
+                                 alt="<?= htmlspecialchars($m['nama_menu']) ?>" 
+                                 class="w-full h-full object-cover">
+                            <span class="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded backdrop-blur-xs capitalize">
+                                <?= $m['kategori'] ?>
                             </span>
                         </button>
                     </div>
@@ -339,40 +295,13 @@ foreach ($semua_menu as $m) {
                                 <h2 class="font-extrabold text-sm text-slate-900">Keranjang Pesanan</h2>
                                 <span class="text-[11px] text-slate-400">Meja #<span class="desktop-table-label"><?= htmlspecialchars($meja) ?></span></span>
                             </div>
-                        </div>
-                        <button onclick="clearCartConfirm()" class="text-xs text-red-500 hover:text-red-700 font-semibold" title="Kosongkan Keranjang">
-                            <i class="fa-regular fa-trash-can mr-1"></i>Hapus
-                        </button>
-                    </div>
-
-                    <!-- List Item Keranjang Desktop (Scrollable) -->
-                    <div id="desktop-cart-list" class="flex-1 overflow-y-auto no-scrollbar py-3 space-y-3">
-                        <!-- Rendered by JavaScript -->
-                    </div>
-
-                    <!-- State Keranjang Kosong di Desktop -->
-                    <div id="desktop-cart-empty" class="py-12 text-center">
-                        <div class="w-14 h-14 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
-                            <i class="fa-solid fa-basket-shopping"></i>
-                        </div>
-                        <p class="text-xs font-bold text-slate-600">Keranjang Masih Kosong</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5">Pilih menu favorit di samping untuk mulai memesan.</p>
-                    </div>
-
-                    <!-- Ringkasan Biaya & Tombol Checkout Desktop -->
-                    <div id="desktop-cart-footer" class="hidden pt-3 border-t border-slate-100 space-y-3">
-                        <div class="space-y-1.5 text-xs">
-                            <div class="flex justify-between text-slate-500">
-                                <span>Subtotal Pesanan</span>
-                                <span id="desktop-subtotal-val" class="font-bold text-slate-800">Rp 0</span>
-                            </div>
-                            <div class="flex justify-between text-slate-500">
-                                <span>Layanan Meja</span>
-                                <span class="font-bold text-emerald-600">GRATIS</span>
-                            </div>
-                            <div class="flex justify-between text-sm font-black text-slate-900 pt-1 border-t border-slate-100">
-                                <span>Total Tagihan</span>
-                                <span id="desktop-total-val" class="text-brand-600">Rp 0</span>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="font-bold text-orange-600 text-sm"><?= format_rupiah($m['harga']) ?></span>
+                                <button onclick="addToCart(<?= $m['id'] ?>, '<?= addslashes(htmlspecialchars($m['nama_menu'])) ?>', <?= $m['harga'] ?>, '<?= addslashes(htmlspecialchars($m['gambar'])) ?>')" 
+                                        class="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold flex items-center space-x-1 shadow-sm active:scale-95 transition">
+                                    <i class="fa-solid fa-plus text-[10px]"></i>
+                                    <span>Tambah</span>
+                                </button>
                             </div>
                         </div>
 
