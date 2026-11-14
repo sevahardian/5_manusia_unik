@@ -229,10 +229,14 @@
         }
     }
 
-    function onQrCodeSuccess(decodedText) {
+    async function onQrCodeSuccess(decodedText) {
         playScannerBeep();
         console.log('QR Code terdeteksi:', decodedText);
-        lookupOrder(decodedText);
+        // Pause kamera sejenak saat memproses
+        if (html5QrCode && isScanningActive) {
+            try { await html5QrCode.pause(); } catch(e){}
+        }
+        processScanAndAutoValidate(decodedText);
     }
 
     function handleManualLookup() {
@@ -241,34 +245,46 @@
             showScannerAlert('Silakan masukkan Kode Pesanan terlebih dahulu!', 'error');
             return;
         }
-        lookupOrder(code);
+        processScanAndAutoValidate(code);
     }
 
-    async function lookupOrder(qrData) {
-        showScannerAlert('Sedang memverifikasi pesanan...', 'info');
+    async function processScanAndAutoValidate(qrData) {
+        showScannerAlert('Memproses scan QR & memvalidasi otomatis...', 'info');
 
         try {
-            // Tentukan base URL API tergantung posisi folder (admin atau kasir)
             const apiUrl = '../api/scan_validate.php';
 
-            const res = await fetch(`${apiUrl}?qr_data=${encodeURIComponent(qrData)}&action=check`);
+            // Otomatis validasi seketika tanpa perlu klik manual dua kali
+            const res = await fetch(`${apiUrl}?qr_data=${encodeURIComponent(qrData)}&action=validate`);
             const json = await res.json();
 
             if (json.status === 'success' && json.data) {
                 currentScannedOrder = json.data;
-                displayScannedOrder(json.data);
-                showScannerAlert('Pesanan berhasil ditemukan!', 'success');
+                displayScannedOrder(json.data, true);
+                showScannerAlert('✅ Berhasil divalidasi otomatis! Pesanan sudah LUNAS & langsung diteruskan ke dapur.', 'success');
+
+                // Trigger update realtime pada kasir/admin
+                if (typeof fetchOrders === 'function') {
+                    fetchOrders();
+                }
             } else {
                 showScannerAlert(json.message || 'Pesanan tidak ditemukan!', 'error');
                 document.getElementById('scan-result-card').classList.add('hidden');
+                // Lanjutkan scan kamera jika gagal
+                if (html5QrCode && isScanningActive) {
+                    try { html5QrCode.resume(); } catch(e){}
+                }
             }
         } catch (err) {
-            console.error('Fetch scan error:', err);
+            console.error('Scan auto-validate error:', err);
             showScannerAlert('Gagal terhubung ke API scanner!', 'error');
+            if (html5QrCode && isScanningActive) {
+                try { html5QrCode.resume(); } catch(e){}
+            }
         }
     }
 
-    function displayScannedOrder(order) {
+    function displayScannedOrder(order, isAutoValidated = false) {
         const card = document.getElementById('scan-result-card');
         card.classList.remove('hidden');
 
@@ -280,26 +296,26 @@
         const statusEl = document.getElementById('res-status-bayar');
         const actionBox = document.getElementById('res-action-box');
 
-        if (order.status_pembayaran === 'lunas') {
-            statusEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200';
-            statusEl.innerHTML = '<i class="fa-solid fa-check mr-1"></i>LUNAS';
-            actionBox.innerHTML = `
-                <div class="p-3 bg-emerald-100/60 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-800 flex items-center justify-center space-x-1.5">
-                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                    <span>Pesanan ini sudah lunas & sedang diproses dapur.</span>
+        statusEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200';
+        statusEl.innerHTML = '<i class="fa-solid fa-check mr-1"></i>LUNAS & DIMASAK';
+
+        actionBox.innerHTML = `
+            <div class="space-y-2">
+                <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs font-bold text-emerald-800 flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                    <span>Tervalidasi Otomatis! Makanan siap dimasak dapur.</span>
                 </div>
-            `;
-        } else {
-            statusEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-100 text-amber-800 border border-amber-200';
-            statusEl.innerHTML = '<i class="fa-solid fa-hourglass-half mr-1"></i>BELUM BAYAR';
-            actionBox.innerHTML = `
-                <button type="button" onclick="validateCurrentScannedOrder()" 
-                        class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs shadow-md shadow-emerald-600/20 active:scale-95 transition flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-circle-check text-sm"></i>
-                    <span>Validasi Pembayaran (Set Lunas & Mulai Masak)</span>
-                </button>
-            `;
-        }
+                <div class="flex gap-2">
+                    <button type="button" onclick="resumeScanningNext()" class="flex-1 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-extrabold rounded-xl text-xs shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Scan Pesanan Berikutnya</span>
+                    </button>
+                    <button type="button" onclick="closeScannerModal()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition">
+                        Selesai
+                    </button>
+                </div>
+            </div>
+        `;
 
         // Tampilkan daftar item
         const itemsList = document.getElementById('res-items-list');
@@ -320,34 +336,14 @@
         itemsList.innerHTML = html;
     }
 
-    async function validateCurrentScannedOrder() {
-        if (!currentScannedOrder) return;
-
-        const btn = document.querySelector('#res-action-box button');
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Memvalidasi...</span>`;
-        }
-
-        try {
-            const apiUrl = '../api/scan_validate.php';
-            const res = await fetch(`${apiUrl}?kode_pesanan=${encodeURIComponent(currentScannedOrder.kode_pesanan)}&action=validate`);
-            const json = await res.json();
-
-            if (json.status === 'success' && json.data) {
-                currentScannedOrder = json.data;
-                displayScannedOrder(json.data);
-                showScannerAlert('Pembayaran berhasil divalidasi! Pesanan siap dimasak dapur.', 'success');
-
-                // Jika di halaman kasir, trigger reload antrean agar langsung update
-                if (typeof fetchOrders === 'function') {
-                    fetchOrders();
-                }
-            } else {
-                showScannerAlert(json.message || 'Gagal memvalidasi pesanan!', 'error');
-            }
-        } catch (err) {
-            showScannerAlert('Terjadi kesalahan saat memvalidasi pembayaran!', 'error');
+    function resumeScanningNext() {
+        document.getElementById('scan-result-card').classList.add('hidden');
+        document.getElementById('manual-order-code').value = '';
+        hideScannerAlert();
+        if (html5QrCode && isScanningActive) {
+            try { html5QrCode.resume(); } catch(e){}
+        } else {
+            startCameraScanner();
         }
     }
 

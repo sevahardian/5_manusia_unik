@@ -204,28 +204,42 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&da
                 </div>
 
             <?php else: ?>
-                <!-- Keadaan Jika Sudah LUNAS -->
+                <!-- Keadaan Jika Sudah LUNAS / Sedang Dimasak / Selesai -->
                 <div class="py-4 space-y-4">
-                    <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-4xl mx-auto shadow-inner">
-                        <i class="fa-solid fa-check"></i>
-                    </div>
-
-                    <div>
-                        <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-extrabold rounded-full mb-1">
-                            LUNAS via <?= htmlspecialchars($order['metode_pembayaran'] ?: 'QRIS') ?>
-                        </span>
-                        <h2 class="text-xl font-black text-slate-900">Pembayaran Sah & Berhasil!</h2>
-                        <p class="text-xs text-slate-500 mt-1">Dapur kami sudah menerima pesanan Anda dan siap memasaknya.</p>
-                    </div>
+                    <?php if ($order['status_pesanan'] === 'selesai'): ?>
+                        <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-4xl mx-auto shadow-inner animate-bounce">
+                            <i class="fa-solid fa-bell-concierge"></i>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3.5 py-1 bg-emerald-100 text-emerald-800 text-xs font-black rounded-full mb-1 border border-emerald-200 uppercase tracking-wide">
+                                🎉 Makanan Siap Disajikan
+                            </span>
+                            <h2 class="text-xl font-black text-slate-900">Pesanan Telah Selesai!</h2>
+                            <p class="text-xs text-slate-500 mt-1">Pelayan kami sedang mengantarkan hidangan ke meja Anda. Selamat menikmati!</p>
+                        </div>
+                    <?php else: ?>
+                        <div class="w-20 h-20 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-4xl mx-auto shadow-inner animate-pulse">
+                            <i class="fa-solid fa-fire-burner"></i>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3.5 py-1 bg-orange-100 text-orange-800 text-xs font-black rounded-full mb-1 border border-orange-200 uppercase tracking-wide">
+                                🔥 Sedang Dimasak di Dapur
+                            </span>
+                            <h2 class="text-xl font-black text-slate-900">Koki Sedang Memasak!</h2>
+                            <p class="text-xs text-slate-500 mt-1">Pembayaran telah sah divalidasi. Hidangan Anda sedang dipersiapkan hangat & higienis.</p>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center justify-between text-left">
                         <div>
-                            <span class="text-[11px] text-slate-400 block">Kode Struk Digital:</span>
+                            <span class="text-[11px] text-slate-400 block">Kode Struk & Validasi:</span>
                             <span class="font-mono font-bold text-slate-800 text-sm"><?= htmlspecialchars($order['kode_pesanan']) ?></span>
                         </div>
                         <div class="text-right">
-                            <span class="text-[11px] text-slate-400 block">Total Dibayar:</span>
-                            <span class="font-black text-emerald-600 text-base"><?= format_rupiah($order['total_harga']) ?></span>
+                            <span class="text-[11px] text-slate-400 block">Status Pembayaran:</span>
+                            <span class="font-black text-emerald-600 text-sm flex items-center justify-end gap-1">
+                                <i class="fa-solid fa-circle-check text-xs"></i> LUNAS (<?= htmlspecialchars($order['metode_pembayaran'] ?: 'QRIS') ?>)
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -339,21 +353,18 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&da
             }
         }
 
-        // Auto refresh checking setiap 6 detik agar status otomatis berubah saat kasir menekan tombol "Set Lunas"
+        // Live polling otomatis setiap 2 detik agar status langsung berubah saat admin/kasir memvalidasi/memasak/menyelesaikan pesanan
         const currentPaidStatus = "<?= $order['status_pembayaran'] ?>";
         const currentOrderStatus = "<?= $order['status_pesanan'] ?>";
 
         async function checkLiveStatus() {
             try {
-                const res = await fetch(`../api/get_orders.php`);
-                const data = await res.json();
-                if (data.status === 'success') {
-                    const list = data.data || data.orders || [];
-                    const thisOrder = list.find(o => o.id == <?= $order['id'] ?>);
-                    if (thisOrder) {
-                        if (thisOrder.status_pembayaran !== currentPaidStatus || thisOrder.status_pesanan !== currentOrderStatus) {
-                            window.location.reload();
-                        }
+                const res = await fetch(`../api/check_order_status.php?order_id=<?= $order['id'] ?>`);
+                const json = await res.json();
+                if (json.status === 'success' && json.data) {
+                    if (json.data.status_pembayaran !== currentPaidStatus || json.data.status_pesanan !== currentOrderStatus) {
+                        // Status berubah seketika, reload halaman untuk update tampilan!
+                        window.location.reload();
                     }
                 }
             } catch (err) {
@@ -361,7 +372,7 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&da
             }
         }
 
-        setInterval(checkLiveStatus, 5000);
+        setInterval(checkLiveStatus, 2000);
     </script>
 </body>
 </html>

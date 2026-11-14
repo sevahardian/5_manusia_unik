@@ -206,16 +206,17 @@ $top_menus = $pdo->query("
                         <thead class="bg-slate-50 text-slate-500 uppercase border-b border-slate-200 font-bold text-[11px]">
                             <tr>
                                 <th class="py-3 px-4">Kode & Meja</th>
-                                <th class="py-3 px-4">Pelanggan</th>
-                                <th class="py-3 px-4">Total Tagihan</th>
-                                <th class="py-3 px-4 text-center">Status</th>
+                                <th class="py-3 px-3">Pelanggan</th>
+                                <th class="py-3 px-3">Total Tagihan</th>
+                                <th class="py-3 px-3 text-center">Pembayaran</th>
+                                <th class="py-3 px-3 text-center">Status Dapur</th>
                                 <th class="py-3 px-4 text-right">Waktu</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             <?php if (empty($riwayat_orders)): ?>
                                 <tr>
-                                    <td colspan="5" class="py-8 text-center text-slate-400">Belum ada transaksi.</td>
+                                    <td colspan="6" class="py-8 text-center text-slate-400">Belum ada transaksi.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($riwayat_orders as $ro): ?>
@@ -226,22 +227,61 @@ $top_menus = $pdo->query("
                                                 Meja <?= htmlspecialchars($ro['nomor_meja']) ?>
                                             </span>
                                         </td>
-                                        <td class="py-3.5 px-4 font-semibold text-slate-700">
+                                        <td class="py-3.5 px-3 font-semibold text-slate-700">
                                             <?= htmlspecialchars($ro['nama_pelanggan']) ?>
                                         </td>
-                                        <td class="py-3.5 px-4 font-black text-slate-900">
+                                        <td class="py-3.5 px-3 font-black text-slate-900">
                                             <?= format_rupiah($ro['total_harga']) ?>
                                         </td>
-                                        <td class="py-3.5 px-4 text-center">
+                                        <td class="py-3.5 px-3 text-center">
                                             <?php if ($ro['status_pembayaran'] === 'lunas'): ?>
-                                                <span class="px-3 py-1 bg-orange-500 text-white text-[10px] font-bold rounded-lg shadow-sm">
+                                                <span class="px-2.5 py-1 bg-orange-500 text-white text-[10px] font-bold rounded-lg shadow-sm inline-block">
                                                     LUNAS
                                                 </span>
                                             <?php else: ?>
-                                                <span class="px-2.5 py-1 bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold rounded-lg">
-                                                    BELUM BAYAR
-                                                </span>
+                                                <form action="../kasir/update_status.php" method="POST" class="inline">
+                                                    <input type="hidden" name="order_id" value="<?= $ro['id'] ?>">
+                                                    <input type="hidden" name="action" value="set_lunas">
+                                                    <button type="submit" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10px] rounded-lg shadow-sm transition active:scale-95" title="Klik untuk validasi pembayaran">
+                                                        Set Lunas
+                                                    </button>
+                                                </form>
                                             <?php endif; ?>
+                                        </td>
+                                        <td class="py-3.5 px-3 text-center">
+                                            <div class="inline-flex items-center gap-1">
+                                                <?php if ($ro['status_pesanan'] === 'menunggu'): ?>
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                                                        Menunggu
+                                                    </span>
+                                                    <form action="../kasir/update_status.php" method="POST" class="inline">
+                                                        <input type="hidden" name="order_id" value="<?= $ro['id'] ?>">
+                                                        <input type="hidden" name="status_pesanan" value="dimasak">
+                                                        <button type="submit" class="px-2 py-0.5 rounded bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10px] transition active:scale-95" title="Mulai masak">
+                                                            Masak
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($ro['status_pesanan'] === 'dimasak'): ?>
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-800 border border-orange-200">
+                                                        Dimasak
+                                                    </span>
+                                                    <form action="../kasir/update_status.php" method="POST" class="inline">
+                                                        <input type="hidden" name="order_id" value="<?= $ro['id'] ?>">
+                                                        <input type="hidden" name="status_pesanan" value="selesai">
+                                                        <button type="submit" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] transition active:scale-95" title="Selesaikan & antar">
+                                                            Selesai
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($ro['status_pesanan'] === 'selesai'): ?>
+                                                    <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                                        <i class="fa-solid fa-check mr-0.5"></i> Selesai
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">
+                                                        Batal
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
                                         </td>
                                         <td class="py-3.5 px-4 text-slate-400 text-right">
                                             <?= date('d M, H:i', strtotime($ro['created_at'])) ?>

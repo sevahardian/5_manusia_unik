@@ -39,6 +39,7 @@ try {
     // Error handling
 }
 
-header('Location: index.php');
+$redirect = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'index.php';
+header("Location: $redirect");
 exit;
 

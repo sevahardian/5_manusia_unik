@@ -41,3 +41,4 @@ try {
 } catch (Exception $e) {
     json_response(['status' => 'error', 'message' => $e->getMessage()], 500);
 }
+
