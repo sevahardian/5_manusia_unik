@@ -1,1 +1,0 @@
-# 5_manusia_unik asa
