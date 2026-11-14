@@ -40,26 +40,28 @@ $items = $stmt_items->fetchAll();
             font-family: 'Courier New', Courier, monospace;
         }
         body {
-            background-color: #f3f4f6;
+            background-color: #FFFDF9;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            color: #4A240A;
         }
         .struk-card {
             background: #fff;
-            width: 300px;
-            padding: 16px;
-            border: 1px dashed #9ca3af;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            padding: 20px;
+            border: 1.5px dashed #7C3E12;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(124, 62, 18, 0.08);
         }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .bold { font-weight: bold; }
         .divider {
-            border-top: 1px dashed #000;
-            margin: 8px 0;
+            border-top: 1px dashed #7C3E12;
+            margin: 10px 0;
         }
         .item-row {
             display: flex;
@@ -69,22 +71,46 @@ $items = $stmt_items->fetchAll();
         }
         .item-note {
             font-size: 10px;
-            color: #4b5563;
+            color: #7C3E12;
+            opacity: 0.8;
             font-style: italic;
             padding-left: 10px;
         }
         .no-print {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 8px;
         }
         .btn-print {
-            background-color: #2563eb;
+            background-color: #FF7E24;
             color: white;
-            padding: 8px 16px;
+            padding: 9px 18px;
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
             font-size: 13px;
+            box-shadow: 0 2px 6px rgba(255, 126, 36, 0.3);
+            transition: all 0.2s ease;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .btn-print:hover {
+            background-color: #E66810;
+        }
+        .btn-close {
+            background-color: #7C3E12;
+            color: white;
+            padding: 9px 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .btn-close:hover {
+            background-color: #5C2D0B;
         }
 
         @media print {
@@ -108,15 +134,15 @@ $items = $stmt_items->fetchAll();
 
     <div class="no-print">
         <button class="btn-print" onclick="window.print()">🖨️ Cetak Struk Sekarang</button>
-        <button class="btn-print" style="background:#4b5563;" onclick="window.close()">Tutup</button>
+        <button class="btn-close" onclick="window.close()">Tutup</button>
     </div>
 
     <div class="struk-card">
         <!-- Header Struk -->
         <div class="text-center">
-            <h2 style="margin: 0; font-size: 16px;">RESTO ENAK RASA</h2>
-            <p style="margin: 2px 0; font-size: 11px;">Jl. Hackathon Inovasi No. 123</p>
-            <p style="margin: 2px 0; font-size: 11px;">Telp: 0812-3456-7890</p>
+            <h2 style="margin: 0; font-size: 16px; color: #7C3E12; letter-spacing: 0.5px;">RESTO ENAK RASA</h2>
+            <p style="margin: 3px 0 1px; font-size: 11px; color: #7C3E12; opacity: 0.85;">Jl. Hackathon Inovasi No. 123</p>
+            <p style="margin: 1px 0; font-size: 11px; color: #7C3E12; opacity: 0.85;">Telp: 0812-3456-7890</p>
         </div>
 
         <div class="divider"></div>
@@ -152,21 +178,21 @@ $items = $stmt_items->fetchAll();
         <div class="divider"></div>
 
         <!-- Total Tagihan -->
-        <div class="item-row bold" style="font-size: 13px;">
+        <div class="item-row bold" style="font-size: 13px; color: #7C3E12;">
             <span>TOTAL TAGIHAN</span>
-            <span>Rp <?= number_format($order['total_harga'], 0, ',', '.') ?></span>
+            <span style="color: #9c5019ff;">Rp <?= number_format($order['total_harga'], 0, ',', '.') ?></span>
         </div>
         <div class="item-row" style="font-size: 11px;">
             <span>Status Bayar</span>
-            <span class="bold"><?= strtoupper($order['status_pembayaran']) ?></span>
+            <span class="bold" style="color: #ff9a51ff;"><?= strtoupper($order['status_pembayaran']) ?></span>
         </div>
 
         <div class="divider"></div>
 
         <!-- Footer Struk -->
-        <div class="text-center" style="font-size: 11px;">
-            <p style="margin: 4px 0;">Terima Kasih Atas Kunjungan Anda!</p>
-            <p style="margin: 2px 0; font-size: 9px; color: #6b7280;">Simpan struk ini sebagai bukti pembayaran sah.</p>
+        <div class="text-center" style="font-size: 11px; color: #7C3E12;">
+            <p style="margin: 4px 0; font-weight: 600;">Terima Kasih Atas Kunjungan Anda!</p>
+            <p style="margin: 2px 0; font-size: 9px; opacity: 0.7;">Simpan struk ini sebagai bukti pembayaran sah.</p>
         </div>
     </div>
 

@@ -63,47 +63,78 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Menu - Resto Enak Rasa</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#7C3E12',
+                            orange: '#FF7E24',
+                            peach: '#FFC079',
+                            cream: '#FFEFAB',
+                            creamLight: '#FFF9EE',
+                            bg: '#FFFDF9',
+                            espresso: '#4A240A'
+                        },
+                        orange: {
+                            50: '#FFF9EE',
+                            100: '#FFEFAB',
+                            200: '#FFE2B8',
+                            300: '#FFC079',
+                            400: '#FFA04E',
+                            500: '#FF7E24',
+                            600: '#E66810',
+                            700: '#7C3E12',
+                            800: '#5C2D0B',
+                            900: '#4A240A'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FFFDF9; color: #4A240A; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+<body class="bg-[#FFFDF9] text-[#4A240A] flex flex-col min-h-screen">
 
     <!-- Navbar Pelanggan & Petugas Persis Landing Page -->
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <header class="sticky top-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-b border-[#FFC079]/30">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
             <a href="index.php" class="flex items-center space-x-2.5">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-orange-500/20">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#7C3E12] to-[#FF7E24] text-white flex items-center justify-center font-bold text-lg shadow-md shadow-[#FF7E24]/20">
                     <i class="fa-solid fa-utensils"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-slate-900 text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
-                    <span class="text-[10px] text-orange-600 font-semibold tracking-wider uppercase">Admin Backoffice</span>
+                    <span class="font-extrabold text-[#7C3E12] text-lg tracking-tight block leading-tight">Resto Enak Rasa</span>
+                    <span class="text-[10px] text-[#FF7E24] font-bold tracking-wider uppercase">Admin Backoffice</span>
                 </div>
             </a>
 
             <!-- Nav Links -->
             <div class="flex items-center space-x-2 text-xs">
                 <!-- Tombol Scan QR Pesanan -->
-                <button onclick="openScannerModal()" class="px-3.5 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center space-x-1.5">
+                <button onclick="openScannerModal()" class="px-3.5 py-2 bg-[#FF7E24] hover:bg-[#7C3E12] text-white font-bold rounded-xl shadow-md shadow-[#FF7E24]/20 active:scale-95 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-qrcode text-xs"></i>
                     <span>Scan QR</span>
                 </button>
-                <a href="index.php" class="px-3.5 py-2 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-slate-700 font-bold rounded-xl border border-slate-200 transition flex items-center space-x-1.5">
+                <a href="index.php" class="px-3.5 py-2 bg-[#FFEFAB]/40 hover:bg-[#FFEFAB] text-[#7C3E12] font-bold rounded-xl border border-[#FFC079]/30 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-chart-pie text-xs"></i>
                     <span>Overview</span>
                 </a>
-                <a href="menu.php" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition flex items-center space-x-1.5">
+                <a href="menu.php" class="px-4 py-2 bg-[#FF7E24] hover:bg-[#7C3E12] text-white font-bold rounded-xl shadow-md shadow-[#FF7E24]/20 active:scale-95 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-bowl-food text-xs"></i>
                     <span>Kelola Menu</span>
                 </a>
-                <a href="../kasir/index.php" class="px-3.5 py-2 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-slate-700 font-bold rounded-xl border border-slate-200 transition flex items-center space-x-1.5">
+                <a href="../kasir/index.php" class="px-3.5 py-2 bg-[#FFEFAB]/40 hover:bg-[#FFEFAB] text-[#7C3E12] font-bold rounded-xl border border-[#FFC079]/30 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-cash-register text-xs"></i>
                     <span class="hidden sm:inline">Layar Kasir</span>
                 </a>
-                <a href="logout.php" onclick="return confirm('Keluar dari sesi Admin?')" class="p-2 text-slate-400 hover:text-rose-600 transition" title="Logout">
+                <a href="logout.php" onclick="return confirm('Keluar dari sesi Admin?')" class="p-2 text-[#7C3E12]/50 hover:text-rose-600 transition" title="Logout">
                     <i class="fa-solid fa-right-from-bracket text-base"></i>
                 </a>
             </div>
@@ -114,12 +145,12 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
 
         <!-- Notifikasi Pesan -->
         <?php if (!empty($pesan)): ?>
-            <div class="bg-orange-50 text-orange-800 border border-orange-200 px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-sm">
+            <div class="bg-[#FFEFAB] text-[#7C3E12] border border-[#FFC079] px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-sm">
                 <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-circle-info text-orange-600 text-sm"></i>
+                    <i class="fa-solid fa-circle-info text-[#FF7E24] text-sm"></i>
                     <span><?= htmlspecialchars($pesan) ?></span>
                 </div>
-                <a href="menu.php" class="text-xs font-bold text-orange-700 underline">Tutup</a>
+                <a href="menu.php" class="text-xs font-bold text-[#7C3E12] underline">Tutup</a>
             </div>
         <?php endif; ?>
 
