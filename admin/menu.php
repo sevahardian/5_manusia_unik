@@ -5,6 +5,9 @@
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/helper.php';
 
+// Pastikan hanya admin yang bisa akses
+check_auth('admin');
+
 $pesan = '';
 
 // Handle Tambah Menu
@@ -62,22 +65,38 @@ $menus = $pdo->query("SELECT * FROM menus ORDER BY id DESC")->fetchAll();
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
-    <!-- Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 shadow-sm">
-        <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <!-- Top Navbar Admin -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <a href="../index.php" class="p-2 text-slate-500 hover:text-slate-800 transition">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </a>
-                <div class="w-9 h-9 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold">
+                <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-lg">
                     <i class="fa-solid fa-bowl-food"></i>
                 </div>
-                <h1 class="font-bold text-base text-slate-900">Kelola Katalog Menu</h1>
+                <div>
+                    <h1 class="font-bold text-base leading-tight">Kelola Katalog Menu</h1>
+                    <span class="text-xs text-slate-400">Admin Backoffice</span>
+                </div>
             </div>
-            <a href="../kasir/index.php" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition flex items-center space-x-1.5">
-                <i class="fa-solid fa-cash-register"></i>
-                <span>Ke Kasir</span>
-            </a>
+
+            <!-- Navigasi Menu Admin -->
+            <div class="flex items-center space-x-2 text-xs">
+                <a href="index.php" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="hidden sm:inline">Overview</span>
+                </a>
+                <a href="menu.php" class="px-3 py-2 rounded-lg bg-emerald-600 text-white font-bold flex items-center space-x-1.5 shadow-sm">
+                    <i class="fa-solid fa-bowl-food"></i>
+                    <span>Kelola Menu</span>
+                </a>
+                <a href="../kasir/index.php" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-cash-register"></i>
+                    <span class="hidden sm:inline">Layar Kasir</span>
+                </a>
+                <a href="logout.php" onclick="return confirm('Keluar dari sesi Admin?')" class="px-3 py-2 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white font-bold flex items-center space-x-1.5 transition ml-2">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="hidden sm:inline">Logout</span>
+                </a>
+            </div>
         </div>
     </header>
 

@@ -5,6 +5,9 @@
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/helper.php';
 
+// Pastikan hanya kasir atau admin yang bisa akses
+check_auth('kasir');
+
 // Ambil semua pesanan terbaru
 $stmt = $pdo->query("
     SELECT * FROM orders 
@@ -44,15 +47,21 @@ $orders = $stmt->fetchAll();
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3 text-sm">
-                <a href="../admin/menu.php" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition">
-                    <i class="fa-solid fa-bowl-food"></i>
-                    <span>Kelola Menu</span>
-                </a>
+            <div class="flex items-center space-x-2 text-xs">
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                    <a href="../admin/index.php" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center space-x-1.5 transition">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Panel Admin</span>
+                    </a>
+                <?php endif; ?>
                 <button onclick="fetchOrders()" class="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center space-x-1" title="Refresh Sekarang">
                     <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i>
                     <span class="hidden sm:inline">Refresh</span>
                 </button>
+                <a href="../admin/logout.php" onclick="return confirm('Keluar dari sesi Kasir?')" class="px-3 py-1.5 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white font-bold flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="hidden sm:inline">Logout</span>
+                </a>
             </div>
         </div>
     </header>

@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['role']     = $user['role'];
 
         if ($user['role'] === 'admin') {
-            header('Location: menu.php');
+            header('Location: index.php');
         } else {
             header('Location: ../kasir/index.php');
         }
